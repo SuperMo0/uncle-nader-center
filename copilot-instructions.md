@@ -1,0 +1,1 @@
+/home/pf/Documents/webdev/Amonader-center/AGENTS.md

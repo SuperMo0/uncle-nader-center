@@ -8,7 +8,12 @@
 
   <div class="header__menu">
     {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
+      <a
+        href="{{ link.url }}"
+        class="header__menu-item {% if link.active or link.child_active %}header__menu-item--active{% endif %}"
+      >
+        {{ link.title }}
+      </a>
     {% endfor %}
   </div>
 
@@ -72,6 +77,15 @@
     color: var(--ammo-primary);
     display: flex;
     gap: 1rem;
+  }
+
+  .header__menu-item--active {
+    font-weight: var(--font-body-weight-bold);
+    color: var(--ammo-primary-dark) !important;
+  }
+
+  .header__menu-item:hover {
+    color: var(--ammo-primary-dark);
   }
 
   .site-header a sup {

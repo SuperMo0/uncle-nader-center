@@ -186,10 +186,7 @@
   width: 24rem;
   height: 24rem;
   border-radius: 50%;
-  /* background: var(--ammo-warm); */
   filter: blur(60px);
-  /* animation: float 3s ease-in-out infinite; */
-  /* animation-delay: 1s; */
   transform: translateY(-50%);
 }
 

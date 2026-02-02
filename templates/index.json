@@ -9,12 +9,54 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "hero_7z9w9p": {
+      "type": "hero",
+      "blocks": {
+        "stat_QWWG6B": {
+          "type": "stat",
+          "settings": {
+            "stat_value": "+500",
+            "stat_label": "منتج متوفر"
+          }
+        },
+        "stat_8w3cim": {
+          "type": "stat",
+          "settings": {
+            "stat_value": "+1000",
+            "stat_label": "عميل سعيد"
+          }
+        },
+        "stat_Prfdqt": {
+          "type": "stat",
+          "settings": {
+            "stat_value": "100%",
+            "stat_label": "قطن طبيعي"
+          }
+        }
+      },
+      "block_order": [
+        "stat_QWWG6B",
+        "stat_8w3cim",
+        "stat_Prfdqt"
+      ],
+      "name": "Hero - عمو نادر",
+      "settings": {
+        "background_image": "shopify://shop_images/small-business-open-sign.jpg",
+        "hero_image": "shopify://shop_images/578d3409-4c03-4a50-ae2e-6a6388f5e0a4.jpg",
+        "badge_text": "✨ تشكيلة جديدة ٢٠٢٦",
+        "heading_line_1": "راحة",
+        "heading_line_2": "أطفالك",
+        "heading_line_3": "تبدأ من هنا",
+        "description": "ملابس قطنية منزلية فاخرة للأولاد والبنات، مصممة لتوفير أقصى درجات الراحة والأناقة لأطفالك",
+        "button_primary_text": "تسوق الآن",
+        "button_primary_link": "",
+        "button_secondary_text": "عروضنا الخاصة",
+        "button_secondary_link": "",
+        "show_stats": true
+      }
     }
   },
   "order": [
-    "main"
+    "hero_7z9w9p"
   ]
 }

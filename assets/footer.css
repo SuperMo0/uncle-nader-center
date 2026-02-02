@@ -5,6 +5,10 @@
   background-color: var(--ammo-primary-dark);
   color: var(--ammo-white);
   padding: 4rem 0 2rem;
+  
+}
+.shopify-section-group-footer-group{
+  margin-top: auto;
 }
 
 .ammo-footer__container {

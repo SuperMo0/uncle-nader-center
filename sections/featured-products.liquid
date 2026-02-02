@@ -1,0 +1,98 @@
+{{ 'featured-products.css' | asset_url | stylesheet_tag }}
+{{ 'product-card.css' | asset_url | stylesheet_tag }}
+
+<section class="ammo-section ammo-products">
+  <div class="ammo-products__container">
+    <!-- Header -->
+    <div class="ammo-products__header">
+      <div class="ammo-products__header-content">
+        {%- if section.settings.badge_text != blank -%}
+          <span class="ammo-products__badge">{{ section.settings.badge_text }}</span>
+        {%- endif -%}
+
+        <h2 class="ammo-products__title">
+          {{ section.settings.heading_part_1 }}
+          <span class="ammo-products__title-gradient">{{ section.settings.heading_part_2 }}</span>
+        </h2>
+      </div>
+
+      {%- if section.settings.collection != blank -%}
+        <a href="{{ section.settings.collection.url }}" class="ammo-products__view-all">
+          عرض الكل
+          {% render 'ammonader-icons', icon: 'arrow-left' %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- Products Grid -->
+    <div class="ammo-products__grid">
+      {%- if section.settings.collection != blank -%}
+        {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+          {% render 'product-card', product: product, index: forloop.index %}
+        {%- endfor -%}
+      {%- else -%}
+        <!-- Placeholder products when no collection selected -->
+        {%- for i in (1..4) -%}
+          <div class="ammo-product-card ammo-fade-in-up ammo-delay-{{ forloop.index }}">
+            <div class="ammo-product-card__image-container">
+              {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'ammo-product-card__image' }}
+            </div>
+            <div class="ammo-product-card__content">
+              <h3 class="ammo-product-card__title">اسم المنتج</h3>
+              <div class="ammo-product-card__prices">
+                <span class="ammo-product-card__price">299 ج.م</span>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "منتجات مميزة - عمو نادر",
+  "tag": "section",
+  "class": "section-featured-products-ammonader",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "نص الشارة",
+      "default": "الأكثر مبيعاً"
+    },
+    {
+      "type": "text",
+      "id": "heading_part_1",
+      "label": "العنوان - الجزء ١",
+      "default": "منتجاتنا"
+    },
+    {
+      "type": "text",
+      "id": "heading_part_2",
+      "label": "العنوان - الجزء ٢ (ملون)",
+      "default": "المميزة"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "المجموعة"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "عدد المنتجات للعرض"
+    }
+  ],
+  "presets": [
+    {
+      "name": "منتجات مميزة - عمو نادر"
+    }
+  ]
+}
+{% endschema %}

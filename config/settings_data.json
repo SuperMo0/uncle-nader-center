@@ -9,7 +9,7 @@
  */
 {
   "current": {
-    "background_color": "#EBF4F6",
+    "background_color": "#e3edef",
     "foreground_color": "#1a1a2e",
     "ammo-primary": "#088395",
     "ammo-primary-dark": "#09637E",
@@ -21,6 +21,7 @@
     "ammo-dark": "#1a1a2e",
     "ammo-gray": "#6b7280",
     "ammo-shadow": "0 4px 20px rgba(8, 131, 149, 0.15)",
-    "ammo-shadow-hover": "0 8px 30px rgba(8, 131, 149, 0.25)"
+    "ammo-shadow-hover": "0 8px 30px rgba(8, 131, 149, 0.25)",
+    "content_for_index": []
   }
 }

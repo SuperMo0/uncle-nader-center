@@ -1,0 +1,136 @@
+{{ 'boys-girls-collection.css' | asset_url | stylesheet_tag }}
+
+<section class="ammo-categories">
+  <div class="ammo-categories__container">
+    <!-- Header -->
+    <div class="ammo-categories__header">
+      {%- if section.settings.badge_text != blank -%}
+        <span class="ammo-categories__badge">{{ section.settings.badge_text }}</span>
+      {%- endif -%}
+
+      <h2 class="ammo-categories__title">
+        {{ section.settings.heading_part_1 }}
+        <span class="ammo-categories__title-gradient">{{ section.settings.heading_part_2 }}</span>
+      </h2>
+
+      {%- if section.settings.subtitle != blank -%}
+        <p class="ammo-categories__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="ammo-categories__grid">
+      {%- for block in section.blocks -%}
+        <a
+          href="{{ block.settings.link }}"
+          class="ammo-categories__card ammo-fade-in-up ammo-delay-{{ forloop.index }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.image != blank -%}
+            <img
+              src="{{ block.settings.image | image_url: width: 800 }}"
+              alt="{{ block.settings.title }}"
+              class="ammo-categories__card-image"
+              loading="lazy"
+            >
+          {%- endif -%}
+
+          <div class="ammo-categories__card-overlay">
+            <h3 class="ammo-categories__card-title">{{ block.settings.title }}</h3>
+            <p class="ammo-categories__card-count">{{ block.settings.item_count }} منتج</p>
+            <span class="ammo-categories__card-btn">
+              تسوق الآن
+              {% render 'ammonader-icons', icon: 'arrow-left' %}
+            </span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "الأقسام - عمو نادر",
+  "tag": "section",
+  "class": "section-categories-ammonader",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "نص الشارة",
+      "default": "تسوق حسب الفئة"
+    },
+    {
+      "type": "text",
+      "id": "heading_part_1",
+      "label": "العنوان - الجزء ١",
+      "default": "اختر من"
+    },
+    {
+      "type": "text",
+      "id": "heading_part_2",
+      "label": "العنوان - الجزء ٢ (ملون)",
+      "default": "تشكيلتنا"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "الوصف الفرعي",
+      "default": "مجموعة متنوعة من الملابس القطنية المريحة للأولاد والبنات بتصاميم عصرية وألوان جذابة"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "فئة",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "الصورة"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "العنوان",
+          "default": "أولاد"
+        },
+        {
+          "type": "text",
+          "id": "item_count",
+          "label": "عدد المنتجات",
+          "default": "250"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "الرابط"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "الأقسام - عمو نادر",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "title": "أولاد",
+            "item_count": "250"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "بنات",
+            "item_count": "280"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

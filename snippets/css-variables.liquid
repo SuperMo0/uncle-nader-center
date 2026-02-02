@@ -1,29 +1,33 @@
 {% style %}
-  :root {
-        --font-body-family: 'Tajawal', sans-serif;
-        --font-heading-family: 'Tajawal', sans-serif;
-        --font-body-style: normal;
-        --font-body-weight: 400;
-        --font-body-weight-bold: 700;
-        --font-heading-style: normal;
-        --font-heading-weight: 700;
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
+    :root {
+          --font-body-family: 'Tajawal', sans-serif;
+          --font-heading-family: 'Tajawal', sans-serif;
+          --font-body-style: normal;
+          --font-body-weight: 400;
+          --font-body-weight-bold: 700;
+          --font-heading-style: normal;
+          --font-heading-weight: 700;
+      --page-width: {{ settings.max_page_width }};
+      --page-margin: {{ settings.min_page_margin }}px;
+      --color-background: {{ settings.background_color }};
+      --color-foreground: {{ settings.foreground_color }};
 
-    --ammo-primary: {{ settings['ammo-primary'] }};
-    --ammo-primary-dark: {{ settings['ammo-primary-dark'] }};
-    --ammo-primary-light: {{ settings['ammo-primary-light'] }};
-    --ammo-cream: {{ settings['ammo-cream'] }};
-    --ammo-soft-blue: {{ settings['ammo-soft-blue'] }};
-    --ammo-warm: {{ settings['ammo-warm'] }};
-    --ammo-white: {{ settings['ammo-white'] }};
-    --ammo-dark: {{ settings['ammo-dark'] }};
-    --ammo-gray: {{ settings['ammo-gray'] }};
-    --ammo-shadow: {{ settings['ammo-shadow'] }};
-    --ammo-shadow-hover: {{ settings['ammo-shadow-hover'] }};
+      --ammo-primary: {{ settings['ammo-primary'] }};
+      --ammo-primary-dark: {{ settings['ammo-primary-dark'] }};
+      --ammo-primary-light: {{ settings['ammo-primary-light'] }};
+      --ammo-cream: {{ settings['ammo-cream'] }};
+      --ammo-soft-blue: {{ settings['ammo-soft-blue'] }};
+      --ammo-warm: {{ settings['ammo-warm'] }};
+      --ammo-white: {{ settings['ammo-white'] }};
+      --ammo-dark: {{ settings['ammo-dark'] }};
+      --ammo-gray: {{ settings['ammo-gray'] }};
+      --ammo-shadow: {{ settings['ammo-shadow'] }};
+      --ammo-shadow-hover: {{ settings['ammo-shadow-hover'] }};
+      --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    }
 
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
-  }
+  .ammo-delay-1 { animation-delay: 0.1s; }
+  .ammo-delay-2 { animation-delay: 0.2s; }
+  .ammo-delay-3 { animation-delay: 0.3s; }
+  .ammo-delay-4 { animation-delay: 0.4s; }
 {% endstyle %}

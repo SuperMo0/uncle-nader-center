@@ -1,0 +1,53 @@
+{% doc %}
+  Renders a product card with image, title, price, and wishlist button.
+
+  @param {product} product - The product object to display
+  @param {number} [index] - Optional index for animation delay class
+
+  @example
+  {% render 'product-card', product: product %}
+  {% render 'product-card', product: product, index: forloop.index %}
+{% enddoc %}
+
+<div class="ammo-product-card ammo-animate-on-scroll" data-delay="{{ index | default: 1 }}">
+  <div class="ammo-product-card__image-container">
+    {%- if product.featured_image != blank -%}
+      <a href="{{ product.url }}">
+        <img
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.title }}"
+          class="ammo-product-card__image"
+          loading="lazy"
+        >
+      </a>
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      {% assign discount = product.compare_at_price
+        | minus: product.price
+        | times: 100.0
+        | divided_by: product.compare_at_price
+        | round
+      %}
+      <span class="ammo-product-card__badge">خصم {{ discount }}%</span>
+    {%- elsif product.tags contains 'new' or product.tags contains 'جديد' -%}
+      <span class="ammo-product-card__badge">جديد</span>
+    {%- endif -%}
+
+    <button class="ammo-product-card__wishlist" aria-label="إضافة للمفضلة">
+      {% render 'ammonader-icons', icon: 'heart' %}
+    </button>
+  </div>
+
+  <div class="ammo-product-card__content">
+    <a href="{{ product.url }}">
+      <h3 class="ammo-product-card__title">{{ product.title }}</h3>
+    </a>
+    <div class="ammo-product-card__prices">
+      <span class="ammo-product-card__price">{{ product.price | money }}</span>
+      {%- if product.compare_at_price > product.price -%}
+        <span class="ammo-product-card__compare-price">{{ product.compare_at_price | money }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

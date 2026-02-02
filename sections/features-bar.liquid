@@ -1,0 +1,98 @@
+{{ 'features-bar.css' | asset_url | stylesheet_tag }}
+
+<section class="ammo-section ammo-features">
+  <div class="ammo-features__container">
+    <div class="ammo-features__grid">
+      {%- for block in section.blocks -%}
+        <div class="ammo-features__item ammo-fade-in-up ammo-delay-{{ forloop.index }}" {{ block.shopify_attributes }}>
+          <div class="ammo-features__icon">
+            {% render 'ammonader-icons', icon: block.settings.icon %}
+          </div>
+          <h3 class="ammo-features__title">{{ block.settings.title }}</h3>
+          <p class="ammo-features__description">{{ block.settings.description }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "مميزات - عمو نادر",
+  "tag": "section",
+  "class": "section-features-bar",
+  "max_blocks": 4,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "ميزة",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "الأيقونة",
+          "options": [
+            { "value": "truck", "label": "شحن" },
+            { "value": "shield", "label": "أمان" },
+            { "value": "refresh", "label": "استبدال" },
+            { "value": "headphones", "label": "دعم" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "العنوان",
+          "default": "شحن سريع"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "الوصف",
+          "default": "توصيل لجميع المحافظات"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "مميزات - عمو نادر",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "truck",
+            "title": "شحن سريع",
+            "description": "توصيل لجميع المحافظات"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "shield",
+            "title": "دفع آمن",
+            "description": "طرق دفع متعددة وآمنة"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "refresh",
+            "title": "استبدال سهل",
+            "description": "استبدال خلال 14 يوم"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "headphones",
+            "title": "دعم 24/7",
+            "description": "خدمة عملاء متميزة"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

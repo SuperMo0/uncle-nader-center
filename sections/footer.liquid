@@ -1,56 +1,233 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{{ 'footer.css' | asset_url | stylesheet_tag }}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<footer class="ammo-footer">
+  <div class="ammo-footer__container">
+    <div class="ammo-footer__grid">
+      <!-- Brand Column -->
+      <div class="ammo-footer__brand">
+        <div class="ammo-footer__logo">
+          <div class="ammo-footer__logo-text">
+            <h3>{{ section.settings.store_name }}</h3>
+            <p>{{ section.settings.store_tagline }}</p>
+          </div>
+          <div class="ammo-footer__logo-icon">{{ section.settings.logo_letter }}</div>
+        </div>
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+        {%- if section.settings.description != blank -%}
+          <p class="ammo-footer__description">{{ section.settings.description }}</p>
+        {%- endif -%}
+
+        <div class="ammo-footer__social">
+          {%- if section.settings.social_twitter != blank -%}
+            <a href="{{ section.settings.social_twitter }}" class="ammo-footer__social-link" aria-label="Twitter">
+              {% render 'ammonader-icons', icon: 'twitter' %}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.social_instagram != blank -%}
+            <a href="{{ section.settings.social_instagram }}" class="ammo-footer__social-link" aria-label="Instagram">
+              {% render 'ammonader-icons', icon: 'instagram' %}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.social_facebook != blank -%}
+            <a href="{{ section.settings.social_facebook }}" class="ammo-footer__social-link" aria-label="Facebook">
+              {% render 'ammonader-icons', icon: 'facebook' %}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'link_list' -%}
+          <div class="ammo-footer__column" {{ block.shopify_attributes }}>
+            <h4 class="ammo-footer__heading">{{ block.settings.heading }}</h4>
+            {%- if block.settings.menu != blank -%}
+              <ul class="ammo-footer__links">
+                {%- for link in block.settings.menu.links -%}
+                  <li>
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if block.type == 'contact' -%}
+          <div class="ammo-footer__column" {{ block.shopify_attributes }}>
+            <h4 class="ammo-footer__heading">{{ block.settings.heading }}</h4>
+
+            {%- if block.settings.phone != blank -%}
+              <div class="ammo-footer__contact-item">
+                <span>{{ block.settings.phone }}</span>
+                {% render 'ammonader-icons', icon: 'phone' %}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.email != blank -%}
+              <div class="ammo-footer__contact-item">
+                <span>{{ block.settings.email }}</span>
+                {% render 'ammonader-icons', icon: 'mail' %}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.address != blank -%}
+              <div class="ammo-footer__contact-item">
+                <span>{{ block.settings.address }}</span>
+                {% render 'ammonader-icons', icon: 'map-pin' %}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Bottom -->
+    <div class="ammo-footer__bottom">
+      <p class="ammo-footer__copyright">{{ section.settings.copyright_text }}</p>
+    </div>
   </div>
 </footer>
 
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
-
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "فوتر - عمو نادر",
+  "tag": "section",
+  "class": "section-footer-ammonader",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "معلومات المتجر"
     },
     {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
+      "type": "text",
+      "id": "store_name",
+      "label": "اسم المتجر",
+      "default": "سنتر عمو نادر"
+    },
+    {
+      "type": "text",
+      "id": "store_tagline",
+      "label": "شعار المتجر",
+      "default": "للملابس القطنية المنزلية"
+    },
+    {
+      "type": "text",
+      "id": "logo_letter",
+      "label": "حرف الشعار",
+      "default": "ن"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "الوصف",
+      "default": "نقدم أفضل الملابس القطنية المنزلية للأطفال بأعلى جودة وأفضل الأسعار"
+    },
+    {
+      "type": "header",
+      "content": "روابط التواصل الاجتماعي"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "رابط فيسبوك"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "رابط انستقرام"
+    },
+    {
+      "type": "url",
+      "id": "social_twitter",
+      "label": "رابط تويتر"
+    },
+    {
+      "type": "header",
+      "content": "حقوق الملكية"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "نص حقوق الملكية",
+      "default": "© 2026 سنتر عمو نادر. جميع الحقوق محفوظة"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "قائمة روابط",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "العنوان",
+          "default": "روابط سريعة"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "القائمة"
+        }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "معلومات التواصل",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "العنوان",
+          "default": "تواصل معنا"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "رقم الهاتف",
+          "default": "01234567890"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "البريد الإلكتروني",
+          "default": "info@ammonader.com"
+        },
+        {
+          "type": "text",
+          "id": "address",
+          "label": "العنوان",
+          "default": "مصر - القاهرة"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "فوتر - عمو نادر",
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "روابط سريعة"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "الأقسام"
+          }
+        },
+        {
+          "type": "contact",
+          "settings": {
+            "heading": "تواصل معنا",
+            "phone": "01234567890",
+            "email": "info@ammonader.com",
+            "address": "مصر - القاهرة"
+          }
+        }
+      ]
     }
   ]
 }

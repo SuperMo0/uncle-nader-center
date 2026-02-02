@@ -27,12 +27,11 @@
           {{ block.shopify_attributes }}
         >
           {%- if block.settings.image != blank -%}
-            <img
-              src="{{ block.settings.image | image_url: width: 800 }}"
-              alt="{{ block.settings.title }}"
-              class="ammo-categories__card-image"
-              loading="lazy"
-            >
+            {{
+              block.settings.image
+              | image_url: width: 800
+              | image_tag: class: 'ammo-categories__card-image', loading: 'lazy', alt: block.settings.title
+            }}
           {%- endif -%}
 
           <div class="ammo-categories__card-overlay">

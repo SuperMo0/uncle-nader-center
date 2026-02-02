@@ -13,12 +13,11 @@
   <div class="ammo-product-card__image-container">
     {%- if product.featured_image != blank -%}
       <a href="{{ product.url }}">
-        <img
-          src="{{ product.featured_image | image_url: width: 600 }}"
-          alt="{{ product.title }}"
-          class="ammo-product-card__image"
-          loading="lazy"
-        >
+        {{
+          product.featured_image
+          | image_url: width: 600
+          | image_tag: class: 'ammo-product-card__image', loading: 'lazy'
+        }}
       </a>
     {%- endif -%}
 

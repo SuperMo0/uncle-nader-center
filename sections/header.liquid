@@ -86,7 +86,7 @@
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart" id="cart-icon-bubble">
         {{ 'icon-cart.svg' | inline_asset_content }}
-        {% if cart.item_count > 0 %}
+        {% if cart.item_count != 0 %}
           <div class="cart-count-bubble">
             <span aria-hidden="true">{{ cart.item_count }}</span>
           </div>
@@ -304,12 +304,15 @@
   .desktop-only {
     display: none;
   }
+  .header__icon--cart {
+    position: relative;
+  }
 
   /* Cart Bubble */
   .cart-count-bubble {
     position: absolute;
-    top: 2px;
-    right: 2px; /* RTL flip needed? */
+    top: -3px;
+    right: 0px;
     background-color: var(--ammo-primary);
     color: var(--ammo-white);
     height: 1.2rem;
@@ -319,12 +322,6 @@
     align-items: center;
     justify-content: center;
     font-size: 0.65rem;
-    line-height: 1;
-  }
-
-  [dir='rtl'] .cart-count-bubble {
-    left: 2px;
-    right: auto;
   }
 
   /* Responsive 768px+ (Tablet) */
@@ -351,7 +348,6 @@
 
     .header__icons-group {
       display: flex;
-      gap: 0.5rem;
     }
 
     .header__logo {

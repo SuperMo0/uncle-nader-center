@@ -11,3 +11,9 @@
 #
 # Ignore templates and sections with a regular expression:
 #   /(templates|sections)/.*\.json/
+
+.gemini
+.shopifyignore
+AGENTS.MD
+copilot-instructions.md
+

@@ -1,11 +1,11 @@
 {{ 'footer.css' | asset_url | stylesheet_tag }}
 
-<footer class="ammo-footer">
+<footer class="ammo-footer full-width">
   <div class="ammo-footer__container">
     <div class="ammo-footer__grid">
       <!-- Brand Column -->
       <div class="ammo-footer__brand">
-        <div class="ammo-footer__logo">
+        <div data-delay="1" class="ammo-footer__logo ammo-animate-on-scroll">
           <div class="ammo-footer__logo-text">
             <h3>{{ section.settings.store_name }}</h3>
             <p>{{ section.settings.store_tagline }}</p>
@@ -14,10 +14,12 @@
         </div>
 
         {%- if section.settings.description != blank -%}
-          <p class="ammo-footer__description">{{ section.settings.description }}</p>
+          <p data-delay="2" class="ammo-footer__description ammo-animate-on-scroll">
+            {{ section.settings.description }}
+          </p>
         {%- endif -%}
 
-        <div class="ammo-footer__social">
+        <div data-delay="3" class="ammo-footer__social ammo-animate-on-scroll">
           {%- if section.settings.social_twitter != blank -%}
             <a href="{{ section.settings.social_twitter }}" class="ammo-footer__social-link" aria-label="Twitter">
               {% render 'ammonader-icons', icon: 'twitter' %}
@@ -44,7 +46,7 @@
             {%- if block.settings.menu != blank -%}
               <ul class="ammo-footer__links">
                 {%- for link in block.settings.menu.links -%}
-                  <li>
+                  <li class="ammo-animate-on-scroll" data-delay="{{ forloop.index }}">
                     <a href="{{ link.url }}">{{ link.title }}</a>
                   </li>
                 {%- endfor -%}
@@ -58,21 +60,21 @@
             <h4 class="ammo-footer__heading">{{ block.settings.heading }}</h4>
 
             {%- if block.settings.phone != blank -%}
-              <div class="ammo-footer__contact-item">
+              <div data-delay="1" class="ammo-footer__contact-item ammo-animate-on-scroll">
                 <span>{{ block.settings.phone }}</span>
                 {% render 'ammonader-icons', icon: 'phone' %}
               </div>
             {%- endif -%}
 
             {%- if block.settings.email != blank -%}
-              <div class="ammo-footer__contact-item">
+              <div class="ammo-footer__contact-item ammo-animate-on-scroll" data-delay="2">
                 <span>{{ block.settings.email }}</span>
                 {% render 'ammonader-icons', icon: 'mail' %}
               </div>
             {%- endif -%}
 
             {%- if block.settings.address != blank -%}
-              <div class="ammo-footer__contact-item">
+              <div class="ammo-footer__contact-item ammo-animate-on-scroll" data-delay="3">
                 <span>{{ block.settings.address }}</span>
                 {% render 'ammonader-icons', icon: 'map-pin' %}
               </div>

@@ -41,6 +41,7 @@
 }
 
 .ammo-categories__title-gradient {
+  padding-top: 8px;
   background: linear-gradient(135deg, var(--ammo-primary), var(--ammo-primary-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

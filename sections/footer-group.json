@@ -13,9 +13,37 @@
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "link_list_rmYXUk": {
+          "type": "link_list",
+          "settings": {
+            "heading": "روابط سريعة",
+            "menu": "main-menu"
+          }
+        },
+        "contact_MA6Djq": {
+          "type": "contact",
+          "settings": {
+            "heading": "تواصل معنا",
+            "phone": "01234567890",
+            "email": "info@ammonader.com",
+            "address": "مصر - القاهرة"
+          }
+        }
+      },
+      "block_order": [
+        "link_list_rmYXUk",
+        "contact_MA6Djq"
+      ],
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "store_name": "سنتر عمو نادر",
+        "store_tagline": "للملابس القطنية المنزلية",
+        "logo_letter": "ن",
+        "description": "نقدم أفضل الملابس القطنية المنزلية للأطفال بأعلى جودة وأفضل الأسعار",
+        "social_facebook": "shopify://collections/hydrogen",
+        "social_instagram": "shopify://pages/contact",
+        "social_twitter": "shopify://products/premium-cotton-polo-shirt",
+        "copyright_text": "© 2026 سنتر عمو نادر. جميع الحقوق محفوظة"
       }
     }
   },

@@ -23,7 +23,7 @@
       {%- for block in section.blocks -%}
         <a
           href="{{ block.settings.link }}"
-          class="ammo-categories__card ammo-fade-in-up ammo-delay-{{ forloop.index }}"
+          class="ammo-categories__card ammo-animate-on-scroll ammo-delay-{{ forloop.index }}"
           {{ block.shopify_attributes }}
         >
           {%- if block.settings.image != blank -%}

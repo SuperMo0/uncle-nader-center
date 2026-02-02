@@ -8,9 +8,12 @@
             if (entry.isIntersecting) {
                 const el = entry.target;
                 const delay = el.dataset.delay || 1;
+                console.log(el.dataset.animation);
+
                 const animation = el.dataset.animation || 'ammo-fade-in-up';
 
                 el.classList.add(animation, 'ammo-delay-' + delay);
+                el.classList.remove('ammo-animate-on-scroll');
                 observer.unobserve(el);
             }
         });

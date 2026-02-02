@@ -4,7 +4,12 @@
   <div class="ammo-features__container">
     <div class="ammo-features__grid">
       {%- for block in section.blocks -%}
-        <div class="ammo-features__item ammo-fade-in-up ammo-delay-{{ forloop.index }}" {{ block.shopify_attributes }}>
+        <div
+          data-animation="ammo-slide-in"
+          data-delay="{{forloop.index}}"
+          class="ammo-features__item ammo-animate-on-scroll"
+          {{ block.shopify_attributes }}
+        >
           <div class="ammo-features__icon">
             {% render 'ammonader-icons', icon: block.settings.icon %}
           </div>

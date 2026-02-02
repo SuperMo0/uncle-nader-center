@@ -5,19 +5,17 @@
 .ammo-products__container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
 }
 
 .ammo-products__header {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  display: block;
+  justify-content: space-between;
   margin-bottom: 4rem;
 }
 
 @media (min-width: 768px) {
   .ammo-products__header {
-    flex-direction: row;
+    display: flex;
     align-items: center;
     justify-content: space-between;
   }
@@ -25,7 +23,6 @@
 
 .ammo-products__header-content {
   text-align: right;
-  /* border: 1px solid black; */
 }
 
 .ammo-products__badge {
@@ -72,6 +69,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
+
 }
 
 .ammo-products__view-all:hover {

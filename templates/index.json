@@ -53,9 +53,102 @@
         "button_secondary_link": "",
         "show_stats": true
       }
+    },
+    "featured_products_xVp49j": {
+      "type": "featured-products",
+      "name": "منتجات مميزة - عمو نادر",
+      "settings": {
+        "badge_text": "الأكثر مبيعاً",
+        "heading_part_1": "منتجاتنا",
+        "heading_part_2": "المميزة",
+        "collection": "automated-collection",
+        "products_to_show": 8
+      }
+    },
+    "boys_girls_collection_WB4NaV": {
+      "type": "boys-girls-collection",
+      "blocks": {
+        "category_j8KgNK": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/0716f22d-9346-4477-b9ed-dfd956162cac.jpg",
+            "title": "أولاد",
+            "item_count": "250",
+            "link": ""
+          }
+        },
+        "category_TwLDbq": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/cd733bb5-cbd7-4d4f-8e6d-82d018305c87.jpg",
+            "title": "بنات",
+            "item_count": "280",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_j8KgNK",
+        "category_TwLDbq"
+      ],
+      "name": "الأقسام - عمو نادر",
+      "settings": {
+        "badge_text": "تسوق حسب الفئة",
+        "heading_part_1": "اختر من",
+        "heading_part_2": "تشكيلتنا",
+        "subtitle": "مجموعة متنوعة من الملابس القطنية المريحة للأولاد والبنات بتصاميم عصرية وألوان جذابة"
+      }
+    },
+    "features_bar_FKNqX6": {
+      "type": "features-bar",
+      "blocks": {
+        "feature_73DWJk": {
+          "type": "feature",
+          "settings": {
+            "icon": "truck",
+            "title": "شحن سريع",
+            "description": "توصيل لجميع المحافظات"
+          }
+        },
+        "feature_cQdLVC": {
+          "type": "feature",
+          "settings": {
+            "icon": "shield",
+            "title": "دفع آمن",
+            "description": "طرق دفع متعددة وآمنة"
+          }
+        },
+        "feature_MPPUVx": {
+          "type": "feature",
+          "settings": {
+            "icon": "refresh",
+            "title": "استبدال سهل",
+            "description": "استبدال خلال 14 يوم"
+          }
+        },
+        "feature_pyJQNT": {
+          "type": "feature",
+          "settings": {
+            "icon": "headphones",
+            "title": "دعم 24/7",
+            "description": "خدمة عملاء متميزة"
+          }
+        }
+      },
+      "block_order": [
+        "feature_73DWJk",
+        "feature_cQdLVC",
+        "feature_MPPUVx",
+        "feature_pyJQNT"
+      ],
+      "name": "مميزات - عمو نادر",
+      "settings": {}
     }
   },
   "order": [
-    "hero_7z9w9p"
+    "hero_7z9w9p",
+    "featured_products_xVp49j",
+    "boys_girls_collection_WB4NaV",
+    "features_bar_FKNqX6"
   ]
 }

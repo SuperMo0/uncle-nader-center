@@ -8,13 +8,39 @@
  * ------------------------------------------------------------
  */
 {
-    "sections": {
-        "main": {
-            "type": "page-contact",
-            "settings": {}
+  "sections": {
+    "main": {
+      "type": "page-contact",
+      "blocks": {
+        "location_rkGjEH": {
+          "type": "location",
+          "settings": {
+            "heading": "موقعنا",
+            "address": "القاهرة سوق الموسكى",
+            "map_link": "https://maps.app.goo.gl/yvZqRwnPSwVmsNLC9",
+            "button_label": "عرض على الخريطة"
+          }
+        },
+        "phone_GxPBce": {
+          "type": "phone",
+          "settings": {
+            "heading": "اتصل بنا",
+            "phone": "010111222333",
+            "text": "متاح من 9 صباحاً حتى 10 مساءً"
+          }
         }
-    },
-    "order": [
-        "main"
-    ]
+      },
+      "block_order": [
+        "location_rkGjEH",
+        "phone_GxPBce"
+      ],
+      "settings": {
+        "title": "تواصل معنا",
+        "content": "<p>كيف يمكننا مساعدتك؟ نحن هنا لخدمتكم.</p>"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
 }

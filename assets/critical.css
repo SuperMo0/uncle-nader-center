@@ -5,6 +5,9 @@
   box-sizing: border-box;
   margin: 0;
 }
+a{
+  color: inherit;
+}
 
 body {
   display: flex;
@@ -73,7 +76,7 @@ p:empty {
 
 /** Theme styles below */
 body {
-  font-family: var(--font-primary--family);
+  font-family: var(--font-heading-family);
   background-color: var(--color-background);
   color: var(--color-foreground);
 }

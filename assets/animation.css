@@ -1,0 +1,4 @@
+:root{
+    --animation-hover-time: 0.2s;
+    --animation-hover-fn: ease-in-out;
+}

@@ -8,5 +8,19 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {}
+  "current": {
+    "background_color": "#EBF4F6",
+    "foreground_color": "#1a1a2e",
+    "ammo-primary": "#088395",
+    "ammo-primary-dark": "#09637E",
+    "ammo-primary-light": "#7AB2B2",
+    "ammo-cream": "#EBF4F6",
+    "ammo-soft-blue": "#ACBAC4",
+    "ammo-warm": "#E1D9BC",
+    "ammo-white": "#FFFFFF",
+    "ammo-dark": "#1a1a2e",
+    "ammo-gray": "#6b7280",
+    "ammo-shadow": "0 4px 20px rgba(8, 131, 149, 0.15)",
+    "ammo-shadow-hover": "0 8px 30px rgba(8, 131, 149, 0.25)"
+  }
 }

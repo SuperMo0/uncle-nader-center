@@ -1,0 +1,198 @@
+{{ 'hero.css' | asset_url | stylesheet_tag }}
+
+<section class="ammo-hero">
+  {%- if section.settings.background_image != blank -%}
+    {{ section.settings.background_image | image_url: width: '2000' | image_tag: class: 'ammo-hero__background' }}
+  {%- endif -%}
+
+  <div class="ammo-hero__overlay"></div>
+
+  <!-- Decorative Circles -->
+  <div class="ammo-hero__circle-2"></div>
+
+  <div class="ammo-hero__container">
+    <div class="ammo-hero__grid">
+      <!-- Content -->
+      <div class="ammo-hero__content ammo-fade-in-up">
+        {%- if section.settings.badge_text != blank -%}
+          <span class="ammo-hero__badge">{{ section.settings.badge_text }}</span>
+        {%- endif -%}
+
+        <h1 class="ammo-hero__title">
+          <span>{{ section.settings.heading_line_1 }}</span>
+          <br>
+          <span class="ammo-hero__title-gradient">{{ section.settings.heading_line_2 }}</span>
+          <br>
+          <span>{{ section.settings.heading_line_3 }}</span>
+        </h1>
+
+        {%- if section.settings.description != blank -%}
+          <p class="ammo-hero__description">{{ section.settings.description }}</p>
+        {%- endif -%}
+
+        <div class="ammo-hero__buttons">
+          {%- if section.settings.button_primary_text != blank -%}
+            <a href="{{ section.settings.button_primary_link }}" class="ammo-hero__btn-primary">
+              {{ section.settings.button_primary_text }}
+              {% render 'ammonader-icons', icon: 'arrow-left' %}
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.button_secondary_text != blank -%}
+            <a href="{{ section.settings.button_secondary_link }}" class="ammo-hero__btn-secondary">
+              {{ section.settings.button_secondary_text }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <!-- Stats -->
+        {%- if section.settings.show_stats -%}
+          <div class="ammo-hero__stats">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'stat' -%}
+                <div class="ammo-hero__stat">
+                  <p class="ammo-hero__stat-value">{{ block.settings.stat_value }}</p>
+                  <p class="ammo-hero__stat-label">{{ block.settings.stat_label }}</p>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Hero Image -->
+      {%- if section.settings.hero_image != blank -%}
+        <div class="ammo-hero__image-container ammo-scale-in ammo-delay-3">
+          <div class="ammo-hero__image-glow"></div>
+          {{ section.settings.hero_image | image_url: width: '2000' | image_tag }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero - عمو نادر",
+  "tag": "section",
+  "class": "section-hero-ammonader",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "صورة الخلفية"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "صورة العرض الرئيسية"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "نص الشارة",
+      "default": "✨ تشكيلة جديدة ٢٠٢٦"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "العنوان - السطر ١",
+      "default": "راحة"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "العنوان - السطر ٢ (ملون)",
+      "default": "أطفالك"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_3",
+      "label": "العنوان - السطر ٣",
+      "default": "تبدأ من هنا"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "الوصف",
+      "default": "ملابس قطنية منزلية فاخرة للأولاد والبنات، مصممة لتوفير أقصى درجات الراحة والأناقة لأطفالك"
+    },
+    {
+      "type": "text",
+      "id": "button_primary_text",
+      "label": "نص الزر الرئيسي",
+      "default": "تسوق الآن"
+    },
+    {
+      "type": "url",
+      "id": "button_primary_link",
+      "label": "رابط الزر الرئيسي"
+    },
+    {
+      "type": "text",
+      "id": "button_secondary_text",
+      "label": "نص الزر الثانوي",
+      "default": "عروضنا الخاصة"
+    },
+    {
+      "type": "url",
+      "id": "button_secondary_link",
+      "label": "رابط الزر الثانوي"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "إظهار الإحصائيات",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "إحصائية",
+      "settings": [
+        {
+          "type": "text",
+          "id": "stat_value",
+          "label": "القيمة",
+          "default": "+500"
+        },
+        {
+          "type": "text",
+          "id": "stat_label",
+          "label": "التسمية",
+          "default": "منتج متوفر"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero - عمو نادر",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "stat_value": "+500",
+            "stat_label": "منتج متوفر"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "stat_value": "+1000",
+            "stat_label": "عميل سعيد"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "stat_value": "100%",
+            "stat_label": "قطن طبيعي"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

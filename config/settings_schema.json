@@ -16,10 +16,16 @@
       },
       {
         "type": "font_picker",
-        "id": "type_primary_font",
+        "id": "type_header_font",
         "default": "work_sans_n4",
-        "label": "t:general.primary"
-      }
+        "label": "Header",
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "default": "work_sans_n4",
+        "label": "Body"
+      },
     ]
   },
   {
@@ -59,14 +65,88 @@
       {
         "type": "color",
         "id": "background_color",
-        "default": "#FFFFFF",
+        "default": "#EBF4F6",
         "label": "t:labels.background"
       },
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#333333",
+        "default": "#1a1a2e",
         "label": "t:labels.foreground"
+      },
+      {
+        "type": "header",
+        "content": "t:labels.ammo_palette"
+      },
+      {
+        "type": "color",
+        "id": "ammo-primary",
+        "default": "#088395",
+        "label": "t:labels.ammo_primary"
+      },
+      {
+        "type": "color",
+        "id": "ammo-primary-dark",
+        "default": "#09637E",
+        "label": "t:labels.ammo_primary_dark"
+      },
+      {
+        "type": "color",
+        "id": "ammo-primary-light",
+        "default": "#7AB2B2",
+        "label": "t:labels.ammo_primary_light"
+      },
+      {
+        "type": "color",
+        "id": "ammo-cream",
+        "default": "#EBF4F6",
+        "label": "t:labels.ammo_cream"
+      },
+      {
+        "type": "color",
+        "id": "ammo-soft-blue",
+        "default": "#ACBAC4",
+        "label": "t:labels.ammo_soft_blue"
+      },
+      {
+        "type": "color",
+        "id": "ammo-warm",
+        "default": "#E1D9BC",
+        "label": "t:labels.ammo_warm"
+      },
+      {
+        "type": "color",
+        "id": "ammo-white",
+        "default": "#FFFFFF",
+        "label": "t:labels.ammo_white"
+      },
+      {
+        "type": "color",
+        "id": "ammo-dark",
+        "default": "#1a1a2e",
+        "label": "t:labels.ammo_dark"
+      },
+      {
+        "type": "color",
+        "id": "ammo-gray",
+        "default": "#6b7280",
+        "label": "t:labels.ammo_gray"
+      },
+      {
+        "type": "header",
+        "content": "t:labels.ammo_effects"
+      },
+      {
+        "type": "text",
+        "id": "ammo-shadow",
+        "default": "0 4px 20px rgba(8, 131, 149, 0.15)",
+        "label": "t:labels.ammo_shadow"
+      },
+      {
+        "type": "text",
+        "id": "ammo-shadow-hover",
+        "default": "0 8px 30px rgba(8, 131, 149, 0.25)",
+        "label": "t:labels.ammo_shadow_hover"
       },
       {
         "type": "range",

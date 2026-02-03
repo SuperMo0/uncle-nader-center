@@ -1,4 +1,4 @@
-{% comment %} {{ 'cart.css' | asset_url | stylesheet_tag }} {% endcomment %}
+{{ 'cart.css' | asset_url | stylesheet_tag }}
 
 {% comment %}
   Empty cart section.
@@ -6,8 +6,8 @@
 <script src="{{ 'cart.js' | asset_url }}" defer></script>
 {% capture empty_cart %}
 <section class="empty-cart-container">
-  <p class="h3">Your basket is empty.</p>
-  <a href="{{ routes.all_products_collection_url }}" class="button">Let's go shopping</a>
+  <p class="h3">سلة التسوق فارغة.</p>
+  <a href="{{ routes.all_products_collection_url }}" class="button">تسوق الآن</a>
 </section>
 {% endcapture %}
 
@@ -17,36 +17,35 @@
 
 <div class="cart-page-width">
   <div class="cart-header-title">
-    <h1>Your Cart</h1>
+    <h1>سلة التسوق</h1>
   </div>
 
   <div id="cart-content" class="cart-container">
     {% if cart.items.size > 0 %}
       <form action="{{ routes.cart_url }}" method="post" class="cart-form">
         <div class="cart-table-header mobile-hidden">
-          <div class="cart-col-product">Product</div>
-          <div class="cart-col-quantity">Quantity</div>
-          <div class="cart-col-total">Total</div>
+          <div class="cart-col-product">المنتج</div>
+          <div class="cart-col-quantity">الكمية</div>
+          <div class="cart-col-total">المجموع</div>
         </div>
         <div class="cart-items-group">
           {% for item in cart.items %}
-            {{ item.id }}
             {% render 'cart-item', item: item %}
           {% endfor %}
         </div>
 
         <div class="cart-footer">
           <div class="cart-footer__row">
-            <span class="cart-subtotal-label">Estimated Total:</span>
+            <span class="cart-subtotal-label">المجموع التقديري:</span>
             <strong class="cart-subtotal-value js--cart-total">{{ cart.total_price | money }}</strong>
           </div>
 
           <div class="cart-footer__note">
-            <p>Taxes and shipping calculated at checkout</p>
+            <p>الضرائب والشحن تحسب عند إتمام الطلب</p>
           </div>
 
           <div class="cart-footer__actions">
-            <button type="submit" name="checkout" class="button button--primary button--full-width">Checkout</button>
+            <button type="submit" name="checkout" class="button button--primary button--full-width">إتمام الطلب</button>
           </div>
 
           {%- if additional_checkout_buttons -%}

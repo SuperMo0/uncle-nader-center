@@ -1,6 +1,7 @@
 /* Cart Layout */
 .cart-page-width {
   max-width: var(--page-width);
+  width: 100%;
   margin: 0 auto;
   padding: var(--page-margin);
 }
@@ -148,21 +149,29 @@
 
 .input-stepper__input {
   width: 3rem;
-  text-align: center;
   border: none;
-  border-left: 1px solid var(--ammo-cream);
-  border-right: 1px solid var(--ammo-cream);
   padding: 0.5rem 0;
-  color: var(--ammo-dark);
+  color: var(--ammo-primary);
   font-weight: bold;
-  -moz-appearance: textfield;
-  appearance: textfield;
+  direction: ltr;
+  border: 1px solid var(--ammo-gray);
+  padding-left: 5px;
 }
-
+.input-stepper__input:focus {
+  outline: none;
+  border: 2px solid var(--ammo-primary-dark);
+}
 .input-stepper__input::-webkit-outer-spin-button,
 .input-stepper__input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.cart-item__error-text {
+  color: #d93d3d;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  line-height: 1.2;
 }
 
 .cart-item__remove {
@@ -264,11 +273,21 @@
   
   /* Create a flex row for Qty and Total on mobile */
   .cart-item__quantity {
+    display: flex;
+    flex-wrap: wrap; /* Allows error message to wrap to next line */
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     margin-top: 0.5rem;
+  }
+
+  /* Force error message to always take full width on mobile */
+  .cart-item__error-text {
+    width: 100%;
+    flex-basis: 100%;
+    order: 3; /* Ensures it sits below the stepper and remove button */
+    text-align: right;
   }
 
   .cart-item__totals {

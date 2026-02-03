@@ -87,18 +87,40 @@ async function checkAvailable(variant_id) {
  * Performs the API fetch and handles success/error
  */
 function updateLineItemQty(el) {
+
     const row = el.closest('.js--cart-item');
     const key = el.dataset.key;
-    const quantity = parseInt(el.value);
+    let quantity = parseInt(el.value); // Use let so we can modify it if needed
+    const errorEl = row.querySelector('.cart-item__error-text');
 
     // 1. Validation
     if (isNaN(quantity) || quantity < 0) return;
+
+    // Reset error state
+    if (errorEl) {
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+    }
 
     // 2. Capture old value for revert logic
     // defaultValue stores the value before user interaction started or last successful save
     const oldValue = el.defaultValue;
 
-    // 3. Lock UI
+    // 3. Check Max / Inventory Limit
+    const max = parseInt(el.max);
+    if (!isNaN(max) && quantity > max) {
+        // Clamp the value to the available max
+        quantity = max;
+        el.value = max;
+
+        // Show message
+        if (errorEl) {
+            errorEl.textContent = `متاح فقط ${max} قطع.`;
+            errorEl.style.display = 'block';
+        }
+    }
+
+    // 4. Lock UI
     toggleRowLoading(row, true);
 
     const data = {
@@ -151,7 +173,11 @@ function updateLineItemQty(el) {
             // ERROR HANDLING: Revert value
             console.error('Error updating cart:', error);
             el.value = oldValue;
-            alert('There was a problem updating your cart. The quantity has been reverted.');
+
+            if (errorEl) {
+                errorEl.textContent = 'حدث خطأ أثناء تحديث السلة. تم استعادة الكمية السابقة.';
+                errorEl.style.display = 'block';
+            }
         })
         .finally(() => {
             // UNLOCK UI (if row typically exists)
@@ -182,11 +208,30 @@ function debouncedQtyHandler(el) {
  */
 function qtyStepperHandler(el, type) {
     let newVal = parseInt(el.value);
+    const maxVal = el.hasAttribute('max') ? parseInt(el.getAttribute('max')) : 999;
 
     if (type === '+') {
-        newVal += 1;
+        if (newVal < maxVal) {
+            newVal += 1;
+        } else {
+            // Optional: Trigger the error message in updateLineItemQty logic immediately? 
+            // Or just do nothing. Doing nothing is standard UI protection.
+            // If we really want to show the error, we could manually show it here, 
+            // but let's just stop incrementing.
+            const row = el.closest('.js--cart-item');
+            const errorEl = row.querySelector('.cart-item__error-text');
+            if (errorEl) {
+                errorEl.textContent = `متاح فقط ${maxVal} قطع.`;
+                errorEl.style.display = 'block';
+            }
+            return; // Stop here
+        }
     } else if (newVal > 0) {
         newVal -= 1;
+        // Hide error when decreasing
+        const row = el.closest('.js--cart-item');
+        const errorEl = row.querySelector('.cart-item__error-text');
+        if (errorEl) errorEl.style.display = 'none';
     }
 
     el.value = newVal;

@@ -45,9 +45,9 @@
       <div class="cart-item__price-wrapper">
         {% if item.original_line_price != item.final_line_price %}
           <div class="cart-item__discounted-prices">
-            <span class="visually-hidden">Regular price</span>
+            <span class="visually-hidden">السعر الأصلي</span>
             <s class="cart-item__old-price">{{ item.original_price | money }}</s>
-            <span class="visually-hidden">Sale price</span>
+            <span class="visually-hidden">سعر العرض</span>
             <span class="cart-item__final-price">{{ item.final_price | money }}</span>
           </div>
         {% else %}
@@ -64,34 +64,35 @@
       <button
         type="button"
         class="input-stepper__button input-stepper__minus"
-        aria-label="Decrease quantity"
+        aria-label="إنقاص الكمية"
         onclick="qtyStepperHandler(this.nextElementSibling, '-');"
       >
         <span>&minus;</span>
       </button>
-      <h1>{{ item.id }}</h1>
       <input
         id="item_{{ item.id }}"
         type="number"
         name="updates[]"
         value="{{ item.quantity }}"
         min="0"
-        max="10"
+        max="{{ item.variant.inventory_quantity }}"
         class="input-stepper__input js--cart-item-qty"
         data-key="{{ item.key }}"
         data-id="{{ item.id }}"
-        aria-label="Quantity"
+        aria-label="الكمية"
         oninput="debouncedQtyHandler(this);"
       >
       <button
         type="button"
         class="input-stepper__button input-stepper__plus"
-        aria-label="Increase quantity"
+        aria-label="زيادة الكمية"
         onclick="qtyStepperHandler(this.previousElementSibling, '+');"
       >
         <span>&plus;</span>
       </button>
     </div>
+
+    <div class="cart-item__error-text" style="display: none;"></div>
 
     <button
       type="button"
@@ -100,7 +101,7 @@
       data-id="{{ item.id }}"
       onclick="updateLineItemQty(Object.assign(document.getElementById('item_{{ item.id }}'), {value: 0}));"
     >
-      Remove
+      حذف
     </button>
   </div>
 

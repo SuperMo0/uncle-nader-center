@@ -1,0 +1,110 @@
+{% liquid
+  assign thumbnail_width = 120
+  if item.image
+    assign thumbnail_height = thumbnail_width | divided_by: item.image.aspect_ratio | ceil
+  else
+    assign thumbnail_height = 120
+  endif
+%}
+
+<div class="cart-item js--cart-item">
+  <div class="cart-item__product-info">
+    <div class="cart-item__media">
+      <a href="{{ item.url }}">
+        {% if item.image == blank %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% else %}
+          <img
+            src="{{ item.image | image_url: width: thumbnail_width }}"
+            width="{{ thumbnail_width }}"
+            height="{{ thumbnail_height }}"
+            alt="{{ item.image.alt | escape }}"
+            loading="lazy"
+            class="cart-item__image"
+          >
+        {% endif %}
+      </a>
+    </div>
+
+    <div class="cart-item__details">
+      <h3 class="cart-item__title">
+        <a href="{{ item.url }}">{{ item.product.title }}</a>
+      </h3>
+
+      {% unless item.product.has_only_default_variant %}
+        <dl class="cart-item__options">
+          {% for option in item.options_with_values %}
+            <div class="cart-item__option">
+              <dt>{{ option.name }}:</dt>
+              <dd>{{ option.value }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      {% endunless %}
+
+      <div class="cart-item__price-wrapper">
+        {% if item.original_line_price != item.final_line_price %}
+          <div class="cart-item__discounted-prices">
+            <span class="visually-hidden">Regular price</span>
+            <s class="cart-item__old-price">{{ item.original_price | money }}</s>
+            <span class="visually-hidden">Sale price</span>
+            <span class="cart-item__final-price">{{ item.final_price | money }}</span>
+          </div>
+        {% else %}
+          <div class="cart-item__final-price">
+            {{ item.original_price | money }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-item__quantity">
+    <div class="input-stepper">
+      <button
+        type="button"
+        class="input-stepper__button input-stepper__minus"
+        aria-label="Decrease quantity"
+        onclick="qtyStepperHandler(this.nextElementSibling, '-');"
+      >
+        <span>&minus;</span>
+      </button>
+      <h1>{{ item.id }}</h1>
+      <input
+        id="item_{{ item.id }}"
+        type="number"
+        name="updates[]"
+        value="{{ item.quantity }}"
+        min="0"
+        max="10"
+        class="input-stepper__input js--cart-item-qty"
+        data-key="{{ item.key }}"
+        data-id="{{ item.id }}"
+        aria-label="Quantity"
+        oninput="debouncedQtyHandler(this);"
+      >
+      <button
+        type="button"
+        class="input-stepper__button input-stepper__plus"
+        aria-label="Increase quantity"
+        onclick="qtyStepperHandler(this.previousElementSibling, '+');"
+      >
+        <span>&plus;</span>
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="cart-item__remove link link--text"
+      data-key="{{ item.key }}"
+      data-id="{{ item.id }}"
+      onclick="updateLineItemQty(Object.assign(document.getElementById('item_{{ item.id }}'), {value: 0}));"
+    >
+      Remove
+    </button>
+  </div>
+
+  <div class="cart-item__totals">
+    <strong class="js--cart-item-total">{{ item.final_line_price | money }}</strong>
+  </div>
+</div>

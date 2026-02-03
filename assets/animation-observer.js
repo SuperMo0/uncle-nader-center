@@ -8,7 +8,6 @@
             if (entry.isIntersecting) {
                 const el = entry.target;
                 const delay = el.dataset.delay || 1;
-                console.log(el.dataset.animation);
 
                 const animation = el.dataset.animation || 'ammo-fade-in-up';
 

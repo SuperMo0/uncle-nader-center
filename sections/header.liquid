@@ -71,10 +71,15 @@
       </ul>
     </nav>
 
+    {{ customer }}
+
     <!-- Icons -->
     <div class="header__icons">
       <div class="desktop-only header__icons-group">
-        <a href="{{ routes.search_url }}" class="header__icon">
+        <a
+          href="{{ routes.search_url }}"
+          class="header__icon {% if request.page_type == 'search' %}header__icon--active{% endif %}"
+        >
           {{ 'icon-search.svg' | inline_asset_content }}
         </a>
         {% if shop.customer_accounts_enabled %}
@@ -84,11 +89,15 @@
         {% endif %}
       </div>
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart" id="cart-icon-bubble">
+      <a
+        href="{{ routes.cart_url }}"
+        class="header__icon header__icon--cart {% if request.page_type == 'cart' %}header__icon--active{% endif %}"
+        id="cart-icon-bubble"
+      >
         {{ 'icon-cart.svg' | inline_asset_content }}
         {% if cart.item_count != 0 %}
           <div class="cart-count-bubble">
-            <span aria-hidden="true">{{ cart.item_count }}</span>
+            <span class="cart-count" aria-hidden="true">{{ cart.item_count }}</span>
           </div>
         {% endif %}
       </a>
@@ -140,7 +149,8 @@
     fill: none;
   }
 
-  .header__icon:hover {
+  .header__icon:hover,
+  .header__icon--active {
     background-color: var(--ammo-primary-light);
   }
 

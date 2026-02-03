@@ -1,37 +1,75 @@
+{% comment %} {{ 'cart.css' | asset_url | stylesheet_tag }} {% endcomment %}
+
 {% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
+  Empty cart section.
 {% endcomment %}
+{% capture empty_cart %}
+<section class="empty-cart-container">
+  <p class="h3">Your basket is empty.</p>
+  <a href="{{ routes.all_products_collection_url }}" class="button">Let's go shopping</a>
+</section>
+{% endcapture %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+<script>
+  const emptyCartHtml = `{{ empty_cart }}`;
+</script>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+<div class="cart-page-width">
+  <div class="cart-header-title">
+    <h1>Your Cart</h1>
+  </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+  <div id="cart-content" class="cart-container">
+    {% if cart.items.size > 0 %}
+      <form action="{{ routes.cart_url }}" method="post" class="cart-form">
+        <div class="cart-table-header mobile-hidden">
+          <div class="cart-col-product">Product</div>
+          <div class="cart-col-quantity">Quantity</div>
+          <div class="cart-col-total">Total</div>
+        </div>
+        <div class="cart-items-group">
+          {% for item in cart.items %}
+            {{ item.id }}
+            {% render 'cart-item', item: item %}
+          {% endfor %}
+        </div>
+
+        <div class="cart-footer">
+          <div class="cart-footer__row">
+            <span class="cart-subtotal-label">Estimated Total:</span>
+            <strong class="cart-subtotal-value js--cart-total">{{ cart.total_price | money }}</strong>
+          </div>
+
+          <div class="cart-footer__note">
+            <p>Taxes and shipping calculated at checkout</p>
+          </div>
+
+          <div class="cart-footer__actions">
+            <button type="submit" name="checkout" class="button button--primary button--full-width">Checkout</button>
+          </div>
+
+          {%- if additional_checkout_buttons -%}
+            <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          {%- endif -%}
+        </div>
+      </form>
+
+      <script src="{{ 'cart.js' | asset_url }}" defer></script>
+    {% endif %}
+
+    {% if cart.items.size == 0 %}
+      {{ empty_cart }}
+    {% endif %}
+  </div>
+</div>
 
 {% schema %}
 {
-  "name": "t:general.cart",
+  "name": "Cart",
+  "tag": "section",
+  "class": "cart-section",
   "settings": []
 }
 {% endschema %}

@@ -1,0 +1,182 @@
+/* Product Page Layout */
+.product-section {
+  padding: var(--page-margin) 0;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media screen and (min-width: 768px) {
+  .product-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+/* Gallery */
+.product-gallery {
+  position: relative;
+}
+
+.product-gallery__main img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--style-border-radius-inputs, 8px);
+  border: 1px solid var(--ammo-cream, #f9f5f0);
+}
+
+/* Info Column */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-title {
+  font-family: var(--font-heading-family);
+  font-size: 2rem;
+  color: var(--ammo-primary-dark, #333);
+  margin: 0;
+}
+
+.product-price {
+  font-size: 1.5rem;
+  color: var(--ammo-primary, #d4a373);
+  font-weight: bold;
+}
+
+.product-description {
+  color: var(--ammo-gray, #666);
+  line-height: 1.6;
+}
+
+/* Variant Swatches (Circles) */
+.product-form__input {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.product-form__label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--ammo-primary-dark);
+}
+
+.product-form__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Hidden Radio Buttons */
+.product-form__radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Circle Swatch Style */
+.product-form__swatch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--ammo-cream, #ccc);
+  cursor: pointer;
+  background-color: var(--ammo-white, #fff);
+  color: var(--ammo-dark, #333);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Active State */
+.product-form__radio:checked + .product-form__swatch {
+  border-color: var(--ammo-primary);
+  background-color: var(--ammo-primary);
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px var(--ammo-white), 0 0 0 4px var(--ammo-primary);
+}
+
+/* Disabled State */
+.product-form__radio:disabled + .product-form__swatch {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Quantity & Add Button */
+.product-form__actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.product-form__quantity {
+  width: 80px;
+  text-align: center;
+  border: 1px solid var(--ammo-cream, #ccc);
+  border-radius: var(--style-border-radius-inputs, 4px);
+  padding: 0.8rem;
+  font-size: 1rem;
+}
+
+.product-form__submit {
+  flex: 1;
+  background-color: var(--ammo-primary, #d4a373);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: var(--style-border-radius-inputs, 4px);
+  transition: background 0.3s;
+}
+
+.product-form__submit:hover {
+  background-color: var(--ammo-primary-dark, #b08968);
+}
+
+.product-form__submit:disabled {
+  background-color: var(--ammo-gray);
+  cursor: not-allowed;
+}
+
+/* Related Products */
+.related-products-section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--ammo-cream, #f9f5f0);
+  background-color: var(--color-background);
+}
+
+.related-products__title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--ammo-primary-dark);
+}
+
+.related-products__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 990px) {
+  .related-products__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

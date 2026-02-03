@@ -5,48 +5,126 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+{{ 'product.css' | asset_url | stylesheet_tag }}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+<script src="{{ "product.js" | asset_url }}" defer="defer"></script>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
+<div class="product-section">
+  <div class="product-grid">
+    <!-- Gallery -->
+    <div class="product-gallery">
+      <div class="product-gallery__main">
+        {%- assign featured_media = product.selected_or_first_available_variant.featured_media
+          | default: product.featured_media
+        -%}
+        <img
+          id="ProductImage-{{ section.id }}"
+          src="{{ featured_media | image_url: width: 800 }}"
+          alt="{{ featured_media.alt | escape }}"
+          loading="eager"
+          width="800"
+          height="{{ 800 | divided_by: featured_media.aspect_ratio | ceil }}"
         >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+      </div>
+    </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+    <!-- Product Info -->
+    <div class="product-info">
+      <h1 class="product-title">{{ product.title }}</h1>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
+      <div class="product-price" id="Price-{{ section.id }}">
+        {{ product.selected_or_first_available_variant.price | money }}
+        {% if product.selected_or_first_available_variant.compare_at_price
+            > product.selected_or_first_available_variant.price
+        %}
+          <s style="color:var(--ammo-gray); font-size: 0.8em;">
+            {{- product.selected_or_first_available_variant.compare_at_price | money -}}
+          </s>
+        {% endif %}
+      </div>
+
+      <div class="product-description">
+        {{ product.description }}
+      </div>
+
+      <!-- Product Form -->
+      {% form 'product', product, class: 'product-form', id: 'product-form-installment' %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        {%- unless product.has_only_default_variant -%}
+          <variant-radios class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}">
+            {%- for option in product.options_with_values -%}
+              <fieldset class="product-form__input">
+                <legend class="product-form__label">{{ option.name }}</legend>
+                <div class="product-form__options">
+                  {%- for value in option.values -%}
+                    <input
+                      type="radio"
+                      id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                      name="{{ option.name }}"
+                      value="{{ value | escape }}"
+                      class="product-form__radio"
+                      form="{{ 'product-form-installment' }}"
+                      {% if option.selected_value == value %}
+                        checked
+                      {% endif %}
+                    >
+                    <label
+                      for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                      class="product-form__swatch"
+                    >
+                      {{ value }}
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+          </variant-radios>
+        {%- endunless -%}
+
+        <div class="product-form__actions">
+          <input
+            type="number"
+            name="quantity"
+            value="1"
+            min="1"
+            class="product-form__quantity"
+            aria-label="الكمية"
+          >
+          <button
+            type="submit"
+            name="add"
+            class="product-form__submit"
+            {% if product.selected_or_first_available_variant.available == false %}
+              disabled
+            {% endif %}
+          >
+            {% if product.selected_or_first_available_variant.available %}
+              أضف إلى السلة
+            {% else %}
+              نفذت الكمية
+            {% endif %}
+          </button>
+        </div>
+
+        {{ form | payment_button }}
+      {% endform %}
+    </div>
+  </div>
 </div>
+
+<script type="application/json" id="ProductJSON-{{ section.id }}">
+  {{ product.variants | json }}
+</script>
 
 {% schema %}
 {
-  "name": "t:general.product",
+  "name": "Product Page",
   "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "presets": [
+    {
+      "name": "Product Page"
+    }
+  ]
 }
 {% endschema %}

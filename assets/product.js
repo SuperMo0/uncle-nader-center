@@ -1,39 +1,115 @@
-class VariantRadios extends HTMLElement {
-  constructor() {
-    super();
-    this.sectionId = this.dataset.section;
-    this.productJson = JSON.parse(document.getElementById(`ProductJSON-${this.sectionId}`).textContent);
-    this.addEventListener('change', this.onVariantChange);
-  }
+document.addEventListener('DOMContentLoaded', function () {
+  const sectionId = document.querySelector('.product-variants') ? document.querySelector('.product-variants').dataset.section : document.querySelector('[id^="ProductJSON-"]').id.replace('ProductJSON-', '');
+  const productJsonScript = document.getElementById(`ProductJSON-${sectionId}`);
 
-  onVariantChange() {
-    this.updateOptions();
-    this.updateMasterId();
-    this.updateMedia();
-    this.updatePrice();
-    this.updateURL();
-  }
+  if (!productJsonScript) return;
 
-  updateOptions() {
-    this.options = Array.from(this.querySelectorAll('fieldset'), (fieldset) => {
-      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+  const productJson = JSON.parse(productJsonScript.textContent);
+  const radioInputs = document.querySelectorAll('.js-variant-radio');
+
+  // Add change listeners
+  radioInputs.forEach(radio => {
+    radio.addEventListener('change', handleVariantChange);
+  });
+
+  // Check for add to cart form submission
+  const form = document.getElementById('product-form-installment');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const submitBtn = form.querySelector('[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.setAttribute('disabled', 'disabled');
+      submitBtn.textContent = 'جاري الإضافة...';
+
+      const formData = new FormData(form);
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          // Fetch fresh cart count
+          fetch('/cart.js')
+            .then(res => res.json())
+            .then(cart => {
+              // Update cart counter using global function if available
+              if (typeof updateCartCounter === 'function') {
+                updateCartCounter(cart);
+              } else {
+                // Fallback: look for generic selector
+                const counters = document.querySelectorAll('.cart-count');
+                counters.forEach(el => el.textContent = cart.item_count);
+              }
+            });
+
+          // Provide feedback (optional: shake or change text back)
+          submitBtn.textContent = 'تمت الإضافة بنجاح';
+          setTimeout(() => {
+            submitBtn.removeAttribute('disabled');
+            submitBtn.textContent = originalText;
+          }, 2000);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          submitBtn.removeAttribute('disabled');
+          submitBtn.textContent = originalText;
+          alert('حدث خطأ. حاول مرة أخرى.');
+        });
     });
   }
 
-  updateMasterId() {
-    this.currentVariant = this.productJson.find((variant) => {
+  function handleVariantChange() {
+    // 1. Get current options
+    const fieldsets = document.querySelectorAll('.product-form__input');
+    const options = Array.from(fieldsets).map(fieldset => {
+      return fieldset.querySelector('input:checked').value;
+    });
+
+    // 2. Find matching variant
+    const currentVariant = productJson.find(variant => {
       return !variant.options.map((option, index) => {
-        return this.options[index] === option;
+        return options[index] === option;
       }).includes(false);
     });
 
-    if (this.currentVariant) {
-      const input = document.querySelector('input[name="id"]');
-      input.value = this.currentVariant.id;
-      
-      // Update Button
-      const btn = document.querySelector('.product-form__submit');
-      if (this.currentVariant.available) {
+    if (currentVariant) {
+      updateUI(currentVariant);
+      updateURL(currentVariant);
+    }
+  }
+
+  function updateUI(variant) {
+    // Update ID Input
+    const input = document.getElementById(`MasterId-${sectionId}`);
+    if (input) input.value = variant.id;
+
+    // Update Price
+    const priceContainer = document.getElementById(`Price-${sectionId}`);
+    if (priceContainer) {
+      if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
+        priceContainer.innerHTML = Shopify.formatMoney(variant.price);
+      } else {
+        priceContainer.innerHTML = (variant.price / 100).toFixed(2) + ' LE';
+      }
+    }
+
+    // Update Image
+    if (variant.featured_media) {
+      const img = document.getElementById(`ProductImage-${sectionId}`);
+      if (img) {
+        img.src = variant.featured_media.src.replace('http:', 'https:');
+      }
+    }
+
+    // Update Button State
+    const btn = document.getElementById(`Submit-${sectionId}`);
+    if (btn) {
+      if (variant.available) {
         btn.removeAttribute('disabled');
         btn.textContent = 'أضف إلى السلة';
       } else {
@@ -43,35 +119,25 @@ class VariantRadios extends HTMLElement {
     }
   }
 
-  updateMedia() {
-    if (!this.currentVariant || !this.currentVariant.featured_media) return;
-    
-    // Simple image switch logic
-    const img = document.getElementById(`ProductImage-${this.sectionId}`);
-    if (img && this.currentVariant.featured_media.src) {
-        // Shopify variant image URLs differ slightly in JSON structure, ensuring protocol
-        img.src = this.currentVariant.featured_media.src.replace('http:', 'https:');
-    }
+  function updateURL(variant) {
+    if (!variant) return;
+    const url = new URL(window.location);
+    url.searchParams.set('variant', variant.id);
+    window.history.replaceState({}, '', url);
   }
 
-  updatePrice() {
-    if (!this.currentVariant) return;
-    const priceContainer = document.getElementById(`Price-${this.sectionId}`);
-    if(priceContainer) {
-        // Format money using Shopify global or simple regex if not available
-        if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
-             priceContainer.innerHTML = Shopify.formatMoney(this.currentVariant.price);
-        } else {
-            // Fallback
-             priceContainer.innerHTML = (this.currentVariant.price / 100).toFixed(2) + ' LE';
-        }
-    }
-  }
+});
 
-  updateURL() {
-    if (!this.currentVariant) return;
-    window.history.replaceState({ }, '', `${this.dataset.url}?variant=${this.currentVariant.id}`);
-  }
+// Quantity Stepper Global Function
+function updateProductQty(change) {
+  // Find the input relative to the clicked button or use ID if unique per section (safe for single product page)
+  // We used ID Quantity-{{ section.id }}
+  const input = document.querySelector('.input-stepper__input');
+  if (!input) return;
+
+  let val = parseInt(input.value) || 1;
+  val += change;
+
+  if (val < 1) val = 1;
+  input.value = val;
 }
-
-customElements.define('variant-radios', VariantRadios);

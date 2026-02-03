@@ -1,13 +1,5 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
-
 {{ 'product.css' | asset_url | stylesheet_tag }}
-
-<script src="{{ "product.js" | asset_url }}" defer="defer"></script>
+<script src="{{ 'product.js' | asset_url }}" defer="defer"></script>
 
 <div class="product-section">
   <div class="product-grid">
@@ -17,14 +9,19 @@
         {%- assign featured_media = product.selected_or_first_available_variant.featured_media
           | default: product.featured_media
         -%}
-        <img
-          id="ProductImage-{{ section.id }}"
-          src="{{ featured_media | image_url: width: 800 }}"
-          alt="{{ featured_media.alt | escape }}"
-          loading="eager"
-          width="800"
-          height="{{ 800 | divided_by: featured_media.aspect_ratio | ceil }}"
-        >
+
+        {% if featured_media %}
+          <img
+            id="ProductImage-{{ section.id }}"
+            src="{{ featured_media | image_url: width: 800 }}"
+            alt="{{ featured_media.alt | escape }}"
+            loading="eager"
+            width="800"
+            height="{{ 800 | divided_by: featured_media.aspect_ratio | ceil }}"
+          >
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
       </div>
     </div>
 
@@ -49,10 +46,15 @@
 
       <!-- Product Form -->
       {% form 'product', product, class: 'product-form', id: 'product-form-installment' %}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input
+          type="hidden"
+          name="id"
+          value="{{ product.selected_or_first_available_variant.id }}"
+          id="MasterId-{{ section.id }}"
+        >
 
         {%- unless product.has_only_default_variant -%}
-          <variant-radios class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}">
+          <div class="product-variants" data-section="{{ section.id }}" data-url="{{ product.url }}">
             {%- for option in product.options_with_values -%}
               <fieldset class="product-form__input">
                 <legend class="product-form__label">{{ option.name }}</legend>
@@ -63,7 +65,7 @@
                       id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
                       name="{{ option.name }}"
                       value="{{ value | escape }}"
-                      class="product-form__radio"
+                      class="product-form__radio js-variant-radio"
                       form="{{ 'product-form-installment' }}"
                       {% if option.selected_value == value %}
                         checked
@@ -79,21 +81,32 @@
                 </div>
               </fieldset>
             {%- endfor -%}
-          </variant-radios>
+          </div>
         {%- endunless -%}
 
         <div class="product-form__actions">
-          <input
-            type="number"
-            name="quantity"
-            value="1"
-            min="1"
-            class="product-form__quantity"
-            aria-label="الكمية"
-          >
+          <div class="input-stepper">
+            <button type="button" class="input-stepper__button" onclick="updateProductQty(-1)">
+              <span>&minus;</span>
+            </button>
+            <input
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              id="Quantity-{{ section.id }}"
+              class="input-stepper__input"
+              aria-label="الكمية"
+            >
+            <button type="button" class="input-stepper__button" onclick="updateProductQty(1)">
+              <span>&plus;</span>
+            </button>
+          </div>
+
           <button
             type="submit"
             name="add"
+            id="Submit-{{ section.id }}"
             class="product-form__submit"
             {% if product.selected_or_first_available_variant.available == false %}
               disabled
@@ -106,8 +119,6 @@
             {% endif %}
           </button>
         </div>
-
-        {{ form | payment_button }}
       {% endform %}
     </div>
   </div>

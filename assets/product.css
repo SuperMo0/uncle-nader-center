@@ -120,22 +120,76 @@
 /* Quantity & Add Button */
 .product-form__actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  width: 100%;
 }
 
-.product-form__quantity {
-  width: 80px;
-  text-align: center;
-  border: 1px solid var(--ammo-cream, #ccc);
+/* Stepper Container - Matches the colorful/nice style requested */
+.input-stepper {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  border: 2px solid var(--ammo-primary, #d4a373);
   border-radius: var(--style-border-radius-inputs, 4px);
-  padding: 0.8rem;
-  font-size: 1rem;
+  background-color: var(--ammo-white, #fff);
+  overflow: hidden;
+  box-shadow: 4px 4px 0px var(--ammo-cream, #f9f5f0);
+}
+
+/* Stepper Buttons (Plus/Minus) */
+.input-stepper__button {
+  background: var(--ammo-white);
+  border: none;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  color: var(--ammo-primary-dark);
+  font-size: 1.2rem;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-stepper__button:hover {
+  background-color: var(--ammo-cream);
+}
+
+/* Stepper Input - Correct Class Name */
+.input-stepper__input {
+  width: 60px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid var(--ammo-primary);
+  border-right: 1px solid var(--ammo-primary);
+  padding: 0.8rem 0;
+  color: var(--ammo-primary-dark);
+  font-weight: bold;
+  font-family: var(--font-heading-family);
+  font-size: 1.1rem;
+  
+  /* Force remove default browser styling */
+  -moz-appearance: textfield !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Remove default arrows */
+.input-stepper__input::-webkit-outer-spin-button,
+.input-stepper__input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+}
+
+.input-stepper__input:focus {
+  outline: none;
+  background-color: var(--ammo-cream);
 }
 
 .product-form__submit {
-  flex: 1;
+  width: 100%;
   background-color: var(--ammo-primary, #d4a373);
   color: #fff;
   border: none;
@@ -144,16 +198,39 @@
   font-weight: bold;
   cursor: pointer;
   border-radius: var(--style-border-radius-inputs, 4px);
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  min-width: 200px;
 }
 
 .product-form__submit:hover {
   background-color: var(--ammo-primary-dark, #b08968);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .product-form__submit:disabled {
   background-color: var(--ammo-gray);
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Payment Button */
+.shopify-payment-button__button {
+  border-radius: var(--style-border-radius-inputs, 4px) !important;
+  font-family: var(--font-heading-family) !important;
+  font-weight: bold !important;
+  transition: all 0.2s ease !important;
+}
+
+.shopify-payment-button__button--unbranded {
+  background-color: var(--ammo-primary-dark) !important;
+  color: var(--ammo-white) !important;
+}
+
+.shopify-payment-button__button--unbranded:hover {
+  background-color: var(--ammo-primary) !important;
 }
 
 /* Related Products */
@@ -171,11 +248,17 @@
 
 .related-products__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 
-@media screen and (min-width: 990px) {
+@media screen and (min-width: 500px) {
+  .related-products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 768px) {
   .related-products__grid {
     grid-template-columns: repeat(4, 1fr);
   }

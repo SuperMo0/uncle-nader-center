@@ -1,9 +1,11 @@
-<link rel="stylesheet" href="{{ 'product.css' | asset_url }}" media="print" onload="this.media='all'">
+{{ 'product-card.css' | asset_url | stylesheet_tag }}
+{{ 'animation.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'animation-observer.js' | asset_url }}" defer="defer"></script>
 
 <div class="product-section related-products-section">
   <div class="page-width">
-    <h2 class="related-products__title h2">منتجات قد تعجبك</h2>
-    
+    <h2 class="related-products__title h2 ammo-animate-on-scroll ammo-fade-in-up">منتجات قد تعجبك</h2>
+
     <div class="related-products__grid">
       {%- liquid
         assign limit = 4
@@ -11,11 +13,6 @@
         assign counter = 0
       -%}
 
-      {% comment %} 
-        Strategy: Use the first collection of the product. 
-        If empty, fallback to 'all'.
-      {% endcomment %}
-      
       {% assign rel_collection = product.collections.first %}
       {% unless rel_collection %}
         {% assign rel_collection = collections.all %}
@@ -24,30 +21,13 @@
       {% for item in rel_collection.products %}
         {% if item.id == current_product.id %}{% continue %}{% endif %}
         {% if counter >= limit %}{% break %}{% endif %}
-        
+
         {% assign counter = counter | plus: 1 %}
-        
-        <div class="cart-item-card" style="text-align: center;">
-            <a href="{{ item.url }}" style="text-decoration: none; color: inherit; display: block;">
-              <div style="margin-bottom: 10px; overflow: hidden; border-radius: var(--style-border-radius-inputs); border: 1px solid var(--ammo-cream);">
-                 {% if item.featured_image %}
-                    <img 
-                      src="{{ item.featured_image | image_url: width: 400 }}" 
-                      alt="{{ item.title }}"
-                      width="400"
-                      height="400"
-                      loading="lazy"
-                      style="width: 100%; height: auto; display: block; transition: transform 0.3s;"
-                    >
-                 {% else %}
-                    {{ 'product-1' | placeholder_svg_tag }}
-                 {% endif %}
-              </div>
-              
-              <h3 style="font-size: 1rem; margin: 0.5rem 0; font-family: var(--font-heading-family);">{{ item.title }}</h3>
-              <p style="color: var(--ammo-primary); font-weight: bold;">{{ item.price | money }}</p>
-            </a>
-        </div>
+        {% comment %} Calculate delay based on loop index to create ripple effect (1, 2, 3, 4) {% endcomment %}
+        {% assign delay_index = counter | modulo: 4 %}
+        {% if delay_index == 0 %}{% assign delay_index = 4 %}{% endif %}
+
+        {% render 'product-card', product: item, index: delay_index %}
       {% endfor %}
     </div>
   </div>

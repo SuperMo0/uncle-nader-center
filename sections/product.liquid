@@ -1,10 +1,12 @@
 {{ 'product.css' | asset_url | stylesheet_tag }}
+{{ 'animation.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'product.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'animation-observer.js' | asset_url }}" defer="defer"></script>
 
 <div class="product-section">
   <div class="product-grid">
     <!-- Gallery -->
-    <div class="product-gallery">
+    <div class="product-gallery ammo-animate-on-scroll ammo-scale-in">
       <div class="product-gallery__main">
         {%- assign featured_media = product.selected_or_first_available_variant.featured_media
           | default: product.featured_media
@@ -27,9 +29,9 @@
 
     <!-- Product Info -->
     <div class="product-info">
-      <h1 class="product-title">{{ product.title }}</h1>
+      <h1 class="product-title ammo-animate-on-scroll ammo-fade-in-up">{{ product.title }}</h1>
 
-      <div class="product-price" id="Price-{{ section.id }}">
+      <div class="product-price ammo-animate-on-scroll ammo-fade-in-up ammo-delay-1" id="Price-{{ section.id }}">
         {{ product.selected_or_first_available_variant.price | money }}
         {% if product.selected_or_first_available_variant.compare_at_price
             > product.selected_or_first_available_variant.price
@@ -40,12 +42,16 @@
         {% endif %}
       </div>
 
-      <div class="product-description">
+      <div class="product-description ammo-animate-on-scroll ammo-fade-in-up ammo-delay-2">
         {{ product.description }}
       </div>
 
       <!-- Product Form -->
-      {% form 'product', product, class: 'product-form', id: 'product-form-installment' %}
+      {% form 'product',
+        product,
+        class: 'product-form ammo-animate-on-scroll ammo-fade-in-up ammo-delay-3',
+        id: 'product-form-installment'
+      %}
         <input
           type="hidden"
           name="id"

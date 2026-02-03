@@ -73,15 +73,12 @@ function toggleRowLoading(row, isLoading) {
 async function checkAvailable(variant_id) {
 
     try {
-        let response = await fetch(`/?variant=40601701482625`);
+        let response = await fetch("/products/cozy-cotton-sweatpants.js");
         let data = await response.text();
         console.log(data);
-
-
     } catch (error) {
         console.log(error);
     }
-
 
 }
 

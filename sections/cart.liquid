@@ -3,6 +3,7 @@
 {% comment %}
   Empty cart section.
 {% endcomment %}
+<script src="{{ 'cart.js' | asset_url }}" defer></script>
 {% capture empty_cart %}
 <section class="empty-cart-container">
   <p class="h3">Your basket is empty.</p>
@@ -55,8 +56,6 @@
           {%- endif -%}
         </div>
       </form>
-
-      <script src="{{ 'cart.js' | asset_url }}" defer></script>
     {% endif %}
 
     {% if cart.items.size == 0 %}

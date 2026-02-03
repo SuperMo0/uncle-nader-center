@@ -156,6 +156,7 @@
   color: var(--ammo-dark);
   font-weight: bold;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .input-stepper__input::-webkit-outer-spin-button,

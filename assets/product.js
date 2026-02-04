@@ -31,7 +31,6 @@
 
         initGallery();
         initVariantSelectors();
-        initQuantitySelector();
         initAddToCart();
         initTabs();
     }
@@ -271,17 +270,20 @@
      * Update main image when color variant changes
      */
     function updateVariantImage(colorValue) {
+
+
+
         if (!productData) return;
 
         // Find variant with this color that has a featured image
         const variantWithImage = productData.variants.find(v =>
             v.options[0] === colorValue && v.featured_image
         );
-
         if (variantWithImage && variantWithImage.featured_image) {
             const mainImage = document.querySelector('.ammo-product__main-image img');
             if (mainImage) {
-                mainImage.src = variantWithImage.featured_image.src;
+                mainImage.removeAttribute('srcset');
+                mainImage.src = 'https:' + variantWithImage.featured_image.src;
             }
 
             // Update thumbnail active state

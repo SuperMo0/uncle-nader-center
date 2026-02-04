@@ -90,9 +90,6 @@ function updateCartCounter(cart) {
  */
 async function addToCart(variantId, quantity, button) {
 
-    console.log(variantId, '*****');
-    return;
-
     if (button) {
         button.classList.add('is-loading');
         button.disabled = true;

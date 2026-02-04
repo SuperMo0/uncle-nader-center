@@ -351,8 +351,6 @@
                 addToCart(parseInt(variantId), quantity, addBtn);
             }
 
-            console.log('here');
-
         });
     }
 

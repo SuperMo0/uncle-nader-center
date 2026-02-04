@@ -80,7 +80,6 @@ function toggleRowLoading(row, isLoading) {
  */
 function updateCartCounter(cart) {
     document.querySelectorAll('.cart-count').forEach(function (el) {
-        console.log(el, '****updating counter');
         el.innerText = cart.item_count;
     });
 }
@@ -118,8 +117,6 @@ async function addToCart(variantId, quantity, button) {
 
         const cartResponse = await fetch('/cart.js');
         const cart = await cartResponse.json();
-
-        console.log('updating cart counter ');
 
         updateCartCounter(cart);
 

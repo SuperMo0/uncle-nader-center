@@ -92,11 +92,9 @@
         id="cart-icon-bubble"
       >
         {{ 'icon-cart.svg' | inline_asset_content }}
-        {% if cart.item_count != 0 %}
-          <div class="cart-count-bubble">
-            <span class="cart-count" aria-label="cart items count">{{ cart.item_count }}</span>
-          </div>
-        {% endif %}
+        <div class="cart-count-bubble">
+          <span class="cart-count" aria-label="cart items count">{{ cart.item_count }}</span>
+        </div>
       </a>
     </div>
   </div>

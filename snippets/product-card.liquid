@@ -9,6 +9,7 @@
   {% render 'product-card', product: product, index: forloop.index %}
 {% enddoc %}
 
+{{ 'product-card.css' | asset_url | stylesheet_tag }}
 <div class="ammo-product-card ammo-animate-on-scroll" data-delay="{{ index | default: 1 }}">
   <div class="ammo-product-card__image-container">
     {%- if product.featured_image != blank -%}

@@ -361,6 +361,7 @@
   font-size: 1rem;
   color: var(--ammo-dark);
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .ammo-product__qty-input::-webkit-outer-spin-button,

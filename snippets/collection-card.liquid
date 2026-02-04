@@ -1,0 +1,52 @@
+{% doc %}
+  Renders a wide collection card with image, title, product count, and shop button.
+
+  @param {collection} collection - The collection object to display
+  @param {number} [index] - Optional index for animation delay class
+  @param {boolean} [show_count] - Show product count (default: true)
+
+  @example
+  {% render 'collection-card', collection: collection %}
+  {% render 'collection-card', collection: collection, index: forloop.index, show_count: true %}
+{% enddoc %}
+
+{%- assign show_count = show_count | default: true -%}
+
+<a
+  href="{{ collection.url }}"
+  class="ammo-collection-card ammo-collection-card--wide ammo-animate-on-scroll{% if index %} ammo-delay-{{ index | modulo: 4 | plus: 1 }}{% endif %}"
+  aria-label="تصفح {{ collection.title }}"
+>
+  <div class="ammo-collection-card__image-container">
+    {%- if collection.featured_image != blank -%}
+      {{
+        collection.featured_image
+        | image_url: width: 800
+        | image_tag: class: 'ammo-collection-card__image', loading: 'lazy', alt: collection.title
+      }}
+    {%- else -%}
+      <div class="ammo-collection-card__placeholder">
+        {% render 'ammonader-icons', icon: 'grid' %}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="ammo-collection-card__content">
+    <h3 class="ammo-collection-card__title">{{ collection.title }}</h3>
+
+    {%- if show_count -%}
+      <p class="ammo-collection-card__count">{{ collection.products_count }} منتج</p>
+    {%- endif -%}
+
+    {%- if collection.description != blank -%}
+      <p class="ammo-collection-card__description">
+        {{ collection.description | strip_html | truncate: 100 }}
+      </p>
+    {%- endif -%}
+
+    <span class="ammo-collection-card__btn">
+      تسوق الآن
+      {% render 'ammonader-icons', icon: 'arrow-left' %}
+    </span>
+  </div>
+</a>

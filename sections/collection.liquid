@@ -1,47 +1,313 @@
 {% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Collection Page Section - سنتر عمو نادر
+  Display products from a collection with filters and sorting
 {% endcomment %}
 
-<h1>{{ collection.title }}</h1>
+{{ 'ammo-collection.css' | asset_url | stylesheet_tag }}
 
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
+<section class="ammo-section ammo-collection">
+  {%- comment -%} Collection Banner {%- endcomment -%}
+  {%- if section.settings.show_banner -%}
+    <div class="ammo-collection__banner">
+      {%- if collection.featured_image != blank -%}
+        {{
+          collection.featured_image
+          | image_url: width: 1920
+          | image_tag: class: 'ammo-collection__banner-image', loading: 'eager', alt: collection.title
+        }}
+      {%- endif -%}
+      <div
+        class="ammo-collection__banner-overlay"
+        style="opacity: {{ section.settings.banner_opacity | divided_by: 100.0 }};"
+      ></div>
+      <div class="ammo-collection__banner-content">
+        <h1 class="ammo-collection__title">{{ collection.title }}</h1>
+        <p class="ammo-collection__count">{{ collection.products_count }} منتج</p>
+        {%- if collection.description != blank -%}
+          <div class="ammo-collection__description">{{ collection.description }}</div>
+        {%- endif -%}
       </div>
-    {% endfor %}
+    </div>
+  {%- else -%}
+    <div class="ammo-collection__header">
+      <div class="ammo-collection__container">
+        <h1 class="ammo-collection__title">{{ collection.title }}</h1>
+        <p class="ammo-collection__count">{{ collection.products_count }} منتج</p>
+      </div>
+    </div>
+  {%- endif -%}
 
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
-</div>
+  <div class="ammo-collection__container">
+    {%- comment -%} Toolbar - Filters & Sort {%- endcomment -%}
+    {%- if section.settings.enable_filters or section.settings.enable_sorting -%}
+      <div class="ammo-collection__toolbar">
+        {%- if section.settings.enable_filters -%}
+          <button type="button" class="ammo-collection__filter-toggle" data-filter-toggle>
+            {% render 'ammonader-icons', icon: 'filter' %}
+            الفلاتر
+          </button>
+        {%- endif -%}
 
-{% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-{% endstylesheet %}
+        {%- if section.settings.enable_sorting -%}
+          <div class="ammo-collection__sort">
+            <label for="sort-select" class="ammo-collection__sort-label">ترتيب:</label>
+            <select id="sort-select" class="ammo-collection__sort-select" onchange="window.location.href = this.value;">
+              {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+              <option
+                value="{{ collection.url }}?sort_by=created-descending"
+                {% if current_sort == 'created-descending' %}
+                  selected
+                {% endif %}
+              >
+                الأحدث
+              </option>
+              <option
+                value="{{ collection.url }}?sort_by=price-ascending"
+                {% if current_sort == 'price-ascending' %}
+                  selected
+                {% endif %}
+              >
+                السعر: من الأقل
+              </option>
+              <option
+                value="{{ collection.url }}?sort_by=price-descending"
+                {% if current_sort == 'price-descending' %}
+                  selected
+                {% endif %}
+              >
+                السعر: من الأعلى
+              </option>
+              <option
+                value="{{ collection.url }}?sort_by=best-selling"
+                {% if current_sort == 'best-selling' %}
+                  selected
+                {% endif %}
+              >
+                الأكثر مبيعاً
+              </option>
+              <option
+                value="{{ collection.url }}?sort_by=title-ascending"
+                {% if current_sort == 'title-ascending' %}
+                  selected
+                {% endif %}
+              >
+                الاسم: أ-ي
+              </option>
+            </select>
+            {% render 'ammonader-icons', icon: 'chevron-down' %}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Filter Drawer (Mobile) {%- endcomment -%}
+    {%- if section.settings.enable_filters -%}
+      <div class="ammo-collection__filters" data-filters>
+        <div class="ammo-collection__filters-header">
+          <h3>الفلاتر</h3>
+          <button type="button" class="ammo-collection__filters-close" data-filter-close>
+            {% render 'ammonader-icons', icon: 'x' %}
+          </button>
+        </div>
+
+        {%- comment -%} Active Filters {%- endcomment -%}
+        {%- if collection.filters.size > 0 -%}
+          <div class="ammo-collection__filters-content">
+            {%- for filter in collection.filters -%}
+              <div class="ammo-collection__filter-group">
+                <h4 class="ammo-collection__filter-title">{{ filter.label }}</h4>
+
+                {%- case filter.type -%}
+                  {%- when 'list' -%}
+                    <ul class="ammo-collection__filter-list">
+                      {%- for value in filter.values -%}
+                        <li>
+                          <label class="ammo-collection__filter-checkbox">
+                            <input
+                              type="checkbox"
+                              name="{{ value.param_name }}"
+                              value="{{ value.value }}"
+                              {% if value.active %}
+                                checked
+                              {% endif %}
+                              onchange="this.form.submit();"
+                            >
+                            <span>{{ value.label }}</span>
+                            <span class="ammo-collection__filter-count">({{ value.count }})</span>
+                          </label>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+
+                  {%- when 'price_range' -%}
+                    <div class="ammo-collection__price-range">
+                      <input
+                        type="number"
+                        name="{{ filter.min_value.param_name }}"
+                        value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                        placeholder="من"
+                        min="0"
+                      >
+                      <span>-</span>
+                      <input
+                        type="number"
+                        name="{{ filter.max_value.param_name }}"
+                        value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                        placeholder="إلى"
+                      >
+                    </div>
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="ammo-collection__filters-backdrop" data-filter-backdrop></div>
+    {%- endif -%}
+
+    {%- comment -%} Products Grid {%- endcomment -%}
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="ammo-collection__grid">
+          {%- for product in collection.products -%}
+            {% render 'product-card', product: product, index: forloop.index %}
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Pagination {%- endcomment -%}
+        {%- if paginate.pages > 1 -%}
+          <nav class="ammo-collection__pagination" aria-label="ترقيم الصفحات">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="ammo-collection__pagination-btn" aria-label="الصفحة السابقة">
+                {% render 'ammonader-icons', icon: 'chevron-right' %}
+              </a>
+            {%- else -%}
+              <span class="ammo-collection__pagination-btn is-disabled">
+                {% render 'ammonader-icons', icon: 'chevron-right' %}
+              </span>
+            {%- endif -%}
+
+            <div class="ammo-collection__pagination-numbers">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="ammo-collection__pagination-num">{{ part.title }}</a>
+                {%- else -%}
+                  {%- if part.title == paginate.current_page -%}
+                    <span class="ammo-collection__pagination-num is-current">{{ part.title }}</span>
+                  {%- else -%}
+                    <span class="ammo-collection__pagination-num">{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="ammo-collection__pagination-btn" aria-label="الصفحة التالية">
+                {% render 'ammonader-icons', icon: 'chevron-left' %}
+              </a>
+            {%- else -%}
+              <span class="ammo-collection__pagination-btn is-disabled">
+                {% render 'ammonader-icons', icon: 'chevron-left' %}
+              </span>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="ammo-collection__empty">
+          <div class="ammo-collection__empty-icon">
+            {% render 'ammonader-icons', icon: 'grid' %}
+          </div>
+          <h2>لا توجد منتجات</h2>
+          <p>جرب تغيير الفلاتر أو تصفح الأقسام الأخرى</p>
+          <a href="/collections" class="ammo-collection__empty-btn">تصفح الأقسام</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+<script>
+  // Filter drawer toggle
+  document.addEventListener('DOMContentLoaded', function () {
+    const filterToggle = document.querySelector('[data-filter-toggle]');
+    const filterClose = document.querySelector('[data-filter-close]');
+    const filterBackdrop = document.querySelector('[data-filter-backdrop]');
+    const filters = document.querySelector('[data-filters]');
+
+    if (filterToggle && filters) {
+      filterToggle.addEventListener('click', () => {
+        filters.classList.add('is-open');
+        filterBackdrop.classList.add('is-visible');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    function closeFilters() {
+      if (filters) filters.classList.remove('is-open');
+      if (filterBackdrop) filterBackdrop.classList.remove('is-visible');
+      document.body.style.overflow = '';
+    }
+
+    if (filterClose) filterClose.addEventListener('click', closeFilters);
+    if (filterBackdrop) filterBackdrop.addEventListener('click', closeFilters);
+  });
+</script>
 
 {% schema %}
 {
-  "name": "t:general.collection",
-  "settings": []
+  "name": "مجموعة - عمو نادر",
+  "tag": "section",
+  "class": "ammo-collection-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "البانر"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "إظهار بانر المجموعة",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "banner_opacity",
+      "label": "شفافية التظليل",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "الفلاتر والترتيب"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filters",
+      "label": "تفعيل الفلاتر",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "تفعيل الترتيب",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "المنتجات"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "عدد المنتجات في الصفحة",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16
+    }
+  ]
 }
 {% endschema %}

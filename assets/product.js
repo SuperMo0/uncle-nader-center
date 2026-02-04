@@ -135,7 +135,9 @@
         if (!productData) return;
 
         const selectedOptions = getSelectedOptions();
+
         const variant = findVariantFromOptions(selectedOptions);
+
 
         if (variant) {
             currentVariant = variant;
@@ -170,12 +172,14 @@
      */
     function findVariantFromOptions(options) {
         if (!productData || !productData.variants) return null;
-
         return productData.variants.find(variant => {
             return options.every((option, index) => {
-                return variant.options[index] === option || !option;
+                return variant.options.find(o => {
+                    return o === option;
+                });
             });
         });
+
     }
 
     /**
@@ -191,9 +195,15 @@
             sizeButtons.forEach(btn => {
                 const sizeValue = btn.dataset.optionValue;
                 const variantExists = productData.variants.find(v =>
-                    v.options[0] === selectedColor &&
-                    v.options[1] === sizeValue &&
-                    v.available
+                    (
+                        v.options[0] === selectedColor &&
+                        v.options[1] === sizeValue && v.available
+                    )
+                    ||
+                    (
+                        v.options[1] === selectedColor &&
+                        v.options[0] === sizeValue && v.available
+                    )
                 );
 
                 if (variantExists) {

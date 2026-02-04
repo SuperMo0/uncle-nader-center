@@ -1,83 +1,111 @@
 {% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Collections List Page Section - سنتر عمو نادر
+  Display all collections in a wide card format
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
+{{ 'ammo-collection-list.css' | asset_url | stylesheet_tag }}
 
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+<section class="ammo-section ammo-collections">
+  <div class="ammo-collections__container">
+    {%- comment -%} Header {%- endcomment -%}
+    <div class="ammo-collections__header">
+      <span class="ammo-collections__badge">{{ section.settings.badge_text | default: 'تصفح' }}</span>
+      <h1 class="ammo-collections__title">
+        {{ section.settings.heading | default: 'تصفح الأقسام' }}
+      </h1>
+      <p class="ammo-collections__subtitle">
+        {{ section.settings.subtitle | default: 'اكتشف مجموعاتنا المتنوعة من ملابس القطن المنزلية' }}
+      </p>
+    </div>
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+    {%- comment -%} Collections Grid {%- endcomment -%}
+    <div class="ammo-collections__grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- comment -%} Manual collection selection {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.collection != blank -%}
+            {% render 'collection-card',
+              collection: block.settings.collection,
+              index: forloop.index,
+              show_count: section.settings.show_count
+            %}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Show all collections {%- endcomment -%}
+        {%- for collection in collections -%}
+          {%- if collection.products_count > 0 and collection.handle != 'all' -%}
+            {% render 'collection-card',
+              collection: collection,
+              index: forloop.index,
+              show_count: section.settings.show_count
+            %}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
+    {%- comment -%} Empty State {%- endcomment -%}
+    {%- if collections.size == 0 -%}
+      <div class="ammo-collections__empty">
+        <div class="ammo-collections__empty-icon">
+          {% render 'ammonader-icons', icon: 'grid' %}
+        </div>
+        <h2>لا توجد مجموعات</h2>
+        <p>لم يتم إنشاء أي مجموعات بعد</p>
       </div>
-    </a>
-  {% endfor %}
-</div>
-
-{% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
-  }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-{% endstylesheet %}
+    {%- endif -%}
+  </div>
+</section>
 
 {% schema %}
 {
-  "name": "t:general.collections_grid",
+  "name": "قائمة الأقسام - عمو نادر",
+  "tag": "section",
+  "class": "ammo-collections-section",
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
+      "type": "text",
+      "id": "badge_text",
+      "label": "نص الشارة",
+      "default": "تصفح"
     },
     {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "type": "text",
+      "id": "heading",
+      "label": "العنوان الرئيسي",
+      "default": "تصفح الأقسام"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "النص الفرعي",
+      "default": "اكتشف مجموعاتنا المتنوعة من ملابس القطن المنزلية"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "إظهار عدد المنتجات",
+      "default": true
     }
   ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "مجموعة",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "اختر المجموعة"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "قائمة الأقسام - عمو نادر"
+    }
+  ]
 }
 {% endschema %}

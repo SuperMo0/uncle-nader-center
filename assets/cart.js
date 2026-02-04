@@ -88,8 +88,11 @@ function updateCartCounter(cart) {
  * Add to Cart - AJAX
  * Used by product page to add items to cart
  */
-function addToCart(variantId, quantity, button) {
-    // Set loading state if button provided
+async function addToCart(variantId, quantity, button) {
+
+    console.log(variantId, '*****');
+    return;
+
     if (button) {
         button.classList.add('is-loading');
         button.disabled = true;
@@ -98,52 +101,48 @@ function addToCart(variantId, quantity, button) {
         button.dataset.originalText = originalText;
     }
 
-    return fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id: variantId,
-            quantity: quantity
-        })
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw err; });
-            }
-            return response.json();
-        })
-        .then(item => {
-            // Fetch updated cart
-            return fetch('/cart.js').then(r => r.json());
-        })
-        .then(cart => {
-            updateCartCounter(cart);
-
-            // Show success message
-            showCartNotification('تمت الإضافة للسلة بنجاح!', 'success');
-
-            // Reset button
-            if (button) {
-                button.classList.remove('is-loading');
-                button.disabled = false;
-                button.innerHTML = button.dataset.originalText || 'أضف للسلة';
-            }
-
-            return cart;
-        })
-        .catch(error => {
-            console.error('Error adding to cart:', error);
-            showCartNotification(error.description || 'حدث خطأ أثناء الإضافة للسلة', 'error');
-
-            // Reset button
-            if (button) {
-                button.classList.remove('is-loading');
-                button.disabled = false;
-                button.innerHTML = button.dataset.originalText || 'أضف للسلة';
-            }
-
-            throw error;
+    try {
+        const addResponse = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: variantId,
+                quantity: quantity
+            })
         });
+
+        if (!addResponse.ok) {
+            const err = await addResponse.json();
+            throw err;
+        }
+
+        await addResponse.json();
+
+        const cartResponse = await fetch('/cart.js');
+        const cart = await cartResponse.json();
+
+        updateCartCounter(cart);
+        showCartNotification('تمت الإضافة للسلة بنجاح!', 'success');
+
+        if (button) {
+            button.classList.remove('is-loading');
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalText || 'أضف للسلة';
+        }
+
+        return cart;
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        showCartNotification(error.description || 'حدث خطأ أثناء الإضافة للسلة', 'error');
+
+        if (button) {
+            button.classList.remove('is-loading');
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalText || 'أضف للسلة';
+        }
+
+        throw error;
+    }
 }
 
 /**

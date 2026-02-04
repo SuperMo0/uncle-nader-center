@@ -10,7 +10,7 @@
     {%- comment -%} Breadcrumb {%- endcomment -%}
     {%- if section.settings.show_breadcrumbs -%}
       <nav class="ammo-product__breadcrumb" aria-label="التنقل">
-        <a href="/">الرئيسية</a>
+        <a href="{{ routes.root_url }}">الرئيسية</a>
         <span class="ammo-product__breadcrumb-sep">/</span>
         {%- if product.collections.size > 0 -%}
           <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>

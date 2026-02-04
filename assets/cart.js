@@ -1,5 +1,12 @@
+/**
+ * Ammonader Cart Script
+ * سنتر عمو نادر - Cart functionality for Shopify
+ */
+
 var Shopify = Shopify || {};
+
 Shopify.money_format = 'LE {{amount}}';
+
 Shopify.formatMoney = function (cents, format) {
     if (typeof cents == 'string') {
         cents = cents.replace('.', '');
@@ -48,8 +55,8 @@ Shopify.formatMoney = function (cents, format) {
     return formatString.replace(placeholderRegex, value);
 };
 
-/*
- * HELPER: Toggle Loading State
+/**
+ * Toggle Loading State
  * Disables/Enables inputs and buttons within the cart item row
  */
 function toggleRowLoading(row, isLoading) {
@@ -58,42 +65,122 @@ function toggleRowLoading(row, isLoading) {
     inputs.forEach(el => {
         if (isLoading) {
             el.setAttribute('disabled', 'disabled');
-            // If it's a link or button, prevent pointer events just in case
             el.style.pointerEvents = 'none';
         } else {
             el.removeAttribute('disabled');
             el.style.pointerEvents = '';
         }
     });
-    // Add visual cue
     row.style.opacity = isLoading ? '0.6' : '1';
     row.style.transition = 'opacity 0.2s ease';
 }
 
-async function checkAvailable(variant_id) {
-
-    try {
-        let response = await fetch("/products/cozy-cotton-sweatpants.js");
-        let data = await response.text();
-        console.log(data);
-    } catch (error) {
-        console.log(error);
-    }
-
+/**
+ * Update Cart Counter in header
+ */
+function updateCartCounter(cart) {
+    document.querySelectorAll('.cart-count').forEach(function (el) {
+        el.innerText = cart.item_count;
+    });
 }
 
-/*
- * UPDATE ITEM QUANTITY
+/**
+ * Add to Cart - AJAX
+ * Used by product page to add items to cart
+ */
+function addToCart(variantId, quantity, button) {
+    // Set loading state if button provided
+    if (button) {
+        button.classList.add('is-loading');
+        button.disabled = true;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="ammo-spinner"></span> جاري الإضافة...';
+        button.dataset.originalText = originalText;
+    }
+
+    return fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id: variantId,
+            quantity: quantity
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(item => {
+            // Fetch updated cart
+            return fetch('/cart.js').then(r => r.json());
+        })
+        .then(cart => {
+            updateCartCounter(cart);
+
+            // Show success message
+            showCartNotification('تمت الإضافة للسلة بنجاح!', 'success');
+
+            // Reset button
+            if (button) {
+                button.classList.remove('is-loading');
+                button.disabled = false;
+                button.innerHTML = button.dataset.originalText || 'أضف للسلة';
+            }
+
+            return cart;
+        })
+        .catch(error => {
+            console.error('Error adding to cart:', error);
+            showCartNotification(error.description || 'حدث خطأ أثناء الإضافة للسلة', 'error');
+
+            // Reset button
+            if (button) {
+                button.classList.remove('is-loading');
+                button.disabled = false;
+                button.innerHTML = button.dataset.originalText || 'أضف للسلة';
+            }
+
+            throw error;
+        });
+}
+
+/**
+ * Show cart notification
+ */
+function showCartNotification(message, type) {
+    // Remove existing notification
+    const existing = document.querySelector('.ammo-cart-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = `ammo-cart-notification ammo-cart-notification--${type}`;
+    notification.innerHTML = `
+    <span>${message}</span>
+    <button onclick="this.parentElement.remove()" aria-label="إغلاق">&times;</button>
+  `;
+    document.body.appendChild(notification);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.classList.add('ammo-cart-notification--fade');
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 3000);
+}
+
+/**
+ * Update Line Item Quantity
  * Performs the API fetch and handles success/error
  */
 function updateLineItemQty(el) {
-
     const row = el.closest('.js--cart-item');
     const key = el.dataset.key;
-    let quantity = parseInt(el.value); // Use let so we can modify it if needed
+    let quantity = parseInt(el.value);
     const errorEl = row.querySelector('.cart-item__error-text');
 
-    // 1. Validation
     if (isNaN(quantity) || quantity < 0) return;
 
     // Reset error state
@@ -102,25 +189,22 @@ function updateLineItemQty(el) {
         errorEl.textContent = '';
     }
 
-    // 2. Capture old value for revert logic
-    // defaultValue stores the value before user interaction started or last successful save
+    // Capture old value for revert logic
     const oldValue = el.defaultValue;
 
-    // 3. Check Max / Inventory Limit
+    // Check Max / Inventory Limit
     const max = parseInt(el.max);
     if (!isNaN(max) && quantity > max) {
-        // Clamp the value to the available max
         quantity = max;
         el.value = max;
 
-        // Show message
         if (errorEl) {
             errorEl.textContent = `متاح فقط ${max} قطع.`;
             errorEl.style.display = 'block';
         }
     }
 
-    // 4. Lock UI
+    // Lock UI
     toggleRowLoading(row, true);
 
     const data = {
@@ -140,8 +224,6 @@ function updateLineItemQty(el) {
             return response.json();
         })
         .then((cart) => {
-            // SUCCESS HANDLING
-
             // Update the default value to the new successful value
             el.defaultValue = quantity;
 
@@ -149,7 +231,10 @@ function updateLineItemQty(el) {
                 row.remove();
                 // Check if cart is now empty
                 if (cart.item_count === 0) {
-                    document.querySelector('#cart-content').innerHTML = emptyCartHtml;
+                    const cartContent = document.querySelector('#cart-content');
+                    if (cartContent) {
+                        cartContent.innerHTML = '<p class="cart-empty">السلة فارغة</p>';
+                    }
                 }
             } else {
                 // Find the updated item to get the new line price
@@ -170,7 +255,6 @@ function updateLineItemQty(el) {
             updateCartCounter(cart);
         })
         .catch((error) => {
-            // ERROR HANDLING: Revert value
             console.error('Error updating cart:', error);
             el.value = oldValue;
 
@@ -180,17 +264,15 @@ function updateLineItemQty(el) {
             }
         })
         .finally(() => {
-            // UNLOCK UI (if row typically exists)
             if (document.body.contains(row)) {
                 toggleRowLoading(row, false);
-                // Refocus input for accessibility/User flow
                 if (document.activeElement !== el) el.focus();
             }
         });
 }
 
-/*
- * DEBOUNCE HANDLER (for manual typing)
+/**
+ * Debounce Handler (for manual typing)
  * Prevents firing request on every keystroke
  */
 function debouncedQtyHandler(el) {
@@ -199,11 +281,11 @@ function debouncedQtyHandler(el) {
     }
     el.dataset.debounceTimer = setTimeout(() => {
         updateLineItemQty(el);
-    }, 500); // 500ms wait time
+    }, 500);
 }
 
-/*
- * STEPPER HANDLER (for +/- buttons)
+/**
+ * Stepper Handler (for +/- buttons)
  * Updates UI immediately then calls debounced handler
  */
 function qtyStepperHandler(el, type) {
@@ -214,21 +296,16 @@ function qtyStepperHandler(el, type) {
         if (newVal < maxVal) {
             newVal += 1;
         } else {
-            // Optional: Trigger the error message in updateLineItemQty logic immediately? 
-            // Or just do nothing. Doing nothing is standard UI protection.
-            // If we really want to show the error, we could manually show it here, 
-            // but let's just stop incrementing.
             const row = el.closest('.js--cart-item');
             const errorEl = row.querySelector('.cart-item__error-text');
             if (errorEl) {
                 errorEl.textContent = `متاح فقط ${maxVal} قطع.`;
                 errorEl.style.display = 'block';
             }
-            return; // Stop here
+            return;
         }
     } else if (newVal > 0) {
         newVal -= 1;
-        // Hide error when decreasing
         const row = el.closest('.js--cart-item');
         const errorEl = row.querySelector('.cart-item__error-text');
         if (errorEl) errorEl.style.display = 'none';
@@ -236,10 +313,4 @@ function qtyStepperHandler(el, type) {
 
     el.value = newVal;
     debouncedQtyHandler(el);
-}
-
-function updateCartCounter(cart) {
-    document.querySelectorAll('.cart-count').forEach(function (el) {
-        el.innerText = cart.item_count;
-    });
 }

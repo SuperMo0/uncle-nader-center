@@ -1,146 +1,353 @@
+{% comment %}
+  Product Page Section - سنتر عمو نادر
+  A comprehensive product page with gallery, variants, and add to cart
+{% endcomment %}
+
 {{ 'product.css' | asset_url | stylesheet_tag }}
-{{ 'animation.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'product-script.js' | asset_url }}" defer="defer"></script>
-<script src="{{ 'animation-observer.js' | asset_url }}" defer="defer"></script>
 
-<div class="product-section">
-  <div class="product-grid">
-    <!-- Gallery -->
-    <div class="product-gallery ammo-animate-on-scroll ammo-scale-in">
-      <div class="product-gallery__main">
-        {%- assign featured_media = product.selected_or_first_available_variant.featured_media
-          | default: product.featured_media
-        -%}
+<section class="ammo-section ammo-product" data-product-section>
+  <div class="ammo-product__container">
+    {%- comment -%} Breadcrumb {%- endcomment -%}
+    {%- if section.settings.show_breadcrumbs -%}
+      <nav class="ammo-product__breadcrumb" aria-label="التنقل">
+        <a href="/">الرئيسية</a>
+        <span class="ammo-product__breadcrumb-sep">/</span>
+        {%- if product.collections.size > 0 -%}
+          <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+          <span class="ammo-product__breadcrumb-sep">/</span>
+        {%- endif -%}
+        <span>{{ product.title }}</span>
+      </nav>
+    {%- endif -%}
 
-        {% if featured_media %}
-          <img
-            id="ProductImage-{{ section.id }}"
-            src="{{ featured_media | image_url: width: 800 }}"
-            alt="{{ featured_media.alt | escape }}"
-            loading="eager"
-            width="800"
-            height="{{ 800 | divided_by: featured_media.aspect_ratio | ceil }}"
-          >
-        {% else %}
-          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Product Info -->
-    <div class="product-info">
-      <h1 class="product-title ammo-animate-on-scroll ammo-fade-in-up">{{ product.title }}</h1>
-
-      <div class="product-price ammo-animate-on-scroll ammo-fade-in-up ammo-delay-1" id="Price-{{ section.id }}">
-        {{ product.selected_or_first_available_variant.price | money }}
-        {% if product.selected_or_first_available_variant.compare_at_price
-            > product.selected_or_first_available_variant.price
-        %}
-          <s style="color:var(--ammo-gray); font-size: 0.8em;">
-            {{- product.selected_or_first_available_variant.compare_at_price | money -}}
-          </s>
-        {% endif %}
-      </div>
-
-      <div class="product-description ammo-animate-on-scroll ammo-fade-in-up ammo-delay-2">
-        {{ product.description }}
-      </div>
-
-      <!-- Product Form -->
-      {% form 'product',
-        product,
-        class: 'product-form ammo-animate-on-scroll ammo-fade-in-up ammo-delay-3',
-        id: 'product-form-installment'
-      %}
-        <input
-          type="hidden"
-          name="id"
-          value="{{ product.selected_or_first_available_variant.id }}"
-          id="MasterId-{{ section.id }}"
+    <div class="ammo-product__grid">
+      {%- comment -%} Gallery {%- endcomment -%}
+      <div class="ammo-product__gallery">
+        <div
+          class="ammo-product__main-image"
+          {% if section.settings.enable_zoom %}
+            data-zoom="true"
+          {% endif %}
         >
+          {%- assign featured_image = product.selected_or_first_available_variant.featured_image
+            | default: product.featured_image
+          -%}
+          {{
+            featured_image
+            | image_url: width: 800
+            | image_tag: class: 'ammo-product__image', loading: 'eager', alt: product.title
+          }}
+        </div>
 
-        {%- unless product.has_only_default_variant -%}
-          <div class="product-variants" data-section="{{ section.id }}" data-url="{{ product.url }}">
-            {%- for option in product.options_with_values -%}
-              <fieldset class="product-form__input">
-                <legend class="product-form__label">{{ option.name }}</legend>
-                <div class="product-form__options">
-                  {%- for value in option.values -%}
-                    <input
-                      type="radio"
-                      id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                      name="{{ option.name }}"
-                      value="{{ value | escape }}"
-                      class="product-form__radio js-variant-radio"
-                      form="{{ 'product-form-installment' }}"
-                      {% if option.selected_value == value %}
-                        checked
-                      {% endif %}
-                    >
-                    <label
-                      for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                      class="product-form__swatch"
-                    >
-                      {{ value }}
-                    </label>
-                  {%- endfor -%}
-                </div>
-              </fieldset>
+        {%- if product.images.size > 1 -%}
+          <div class="ammo-product__thumbnails">
+            {%- for image in product.images -%}
+              <button
+                type="button"
+                class="ammo-product__thumbnail{% if image == featured_image %} is-active{% endif %}"
+                data-src="{{ image | image_url: width: 800 }}"
+                data-srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 800 }} 800w"
+                aria-label="عرض الصورة {{ forloop.index }}"
+                tabindex="0"
+              >
+                {{ image | image_url: width: 150 | image_tag: loading: 'lazy', alt: product.title }}
+              </button>
             {%- endfor -%}
           </div>
-        {%- endunless -%}
+        {%- endif -%}
+      </div>
 
-        <div class="product-form__actions">
-          <div class="input-stepper">
-            <button type="button" class="input-stepper__button" onclick="updateProductQty(-1)">
-              <span>&minus;</span>
-            </button>
-            <input
-              type="number"
-              name="quantity"
-              value="1"
-              min="1"
-              id="Quantity-{{ section.id }}"
-              class="input-stepper__input"
-              aria-label="الكمية"
+      {%- comment -%} Product Info {%- endcomment -%}
+      <div class="ammo-product__info">
+        <h1 class="ammo-product__title">{{ product.title }}</h1>
+
+        {%- comment -%} Price {%- endcomment -%}
+        <div class="ammo-product__prices">
+          <span class="ammo-product__price">
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+          {%- if product.selected_or_first_available_variant.compare_at_price
+              > product.selected_or_first_available_variant.price
+          -%}
+            <span class="ammo-product__compare-price">
+              {{ product.selected_or_first_available_variant.compare_at_price | money }}
+            </span>
+            {%- assign discount = product.selected_or_first_available_variant.compare_at_price
+              | minus: product.selected_or_first_available_variant.price
+              | times: 100.0
+              | divided_by: product.selected_or_first_available_variant.compare_at_price
+              | round
+            -%}
+            <span class="ammo-product__discount-badge">خصم {{ discount }}%</span>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Product Form {%- endcomment -%}
+        <form class="ammo-product__form" action="{{ routes.cart_add_url }}" method="post">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          {%- comment -%} Variant Options {%- endcomment -%}
+          {%- for option in product.options_with_values -%}
+            {%- assign option_name_lower = option.name | downcase -%}
+            {%- assign is_color = false -%}
+            {%- assign is_size = false -%}
+
+            {%- if option_name_lower contains 'color'
+              or option_name_lower contains 'colour'
+              or option.name contains 'اللون'
+            -%}
+              {%- assign is_color = true -%}
+            {%- elsif option_name_lower contains 'size'
+              or option.name contains 'المقاس'
+              or option.name contains 'القياس'
+            -%}
+              {%- assign is_size = true -%}
+            {%- endif -%}
+
+            <div class="ammo-product__option">
+              <label class="ammo-product__option-label">{{ option.name }}:</label>
+
+              {%- if is_color -%}
+                <div class="ammo-product__color-swatches">
+                  {%- for value in option.values -%}
+                    {%- assign color_class = value | handleize -%}
+                    {%- assign is_selected = false -%}
+                    {%- if product.selected_or_first_available_variant.options[forloop.parentloop.index0] == value -%}
+                      {%- assign is_selected = true -%}
+                    {%- endif -%}
+                    <button
+                      type="button"
+                      class="ammo-product__color-swatch ammo-color--{{ color_class }}{% if is_selected %} is-selected{% endif %}"
+                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      data-option-value="{{ value }}"
+                      title="{{ value }}"
+                      aria-label="اللون {{ value }}"
+                    >
+                      <span class="visually-hidden">{{ value }}</span>
+                    </button>
+                  {%- endfor -%}
+                </div>
+              {%- elsif is_size -%}
+                <div class="ammo-product__size-buttons">
+                  {%- for value in option.values -%}
+                    {%- assign is_selected = false -%}
+                    {%- if product.selected_or_first_available_variant.options[forloop.parentloop.index0] == value -%}
+                      {%- assign is_selected = true -%}
+                    {%- endif -%}
+                    <button
+                      type="button"
+                      class="ammo-product__size-btn{% if is_selected %} is-selected{% endif %}"
+                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      data-option-value="{{ value }}"
+                    >
+                      {{ value }}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              {%- else -%}
+                <select class="ammo-product__select" data-option-index="{{ forloop.index0 }}">
+                  {%- for value in option.values -%}
+                    <option
+                      value="{{ value }}"
+                      {% if product.selected_or_first_available_variant.options[forloop.parentloop.index0] == value %}
+                        selected
+                      {% endif %}
+                    >
+                      {{ value }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+
+          {%- comment -%} Add to Cart Buttons {%- endcomment -%}
+          <div class="ammo-product__actions">
+            <button
+              type="submit"
+              class="ammo-product__add-btn"
+              {% unless product.selected_or_first_available_variant.available %}
+                disabled
+              {% endunless %}
             >
-            <button type="button" class="input-stepper__button" onclick="updateProductQty(1)">
-              <span>&plus;</span>
+              {% render 'ammonader-icons', icon: 'cart' %}
+              {% if product.selected_or_first_available_variant.available %}
+                أضف للسلة
+              {% else %}
+                غير متوفر
+              {% endif %}
+            </button>
+
+            <button type="button" class="ammo-product__wishlist-btn" aria-label="أضف للمفضلة">
+              {% render 'ammonader-icons', icon: 'heart' %}
             </button>
           </div>
+        </form>
 
-          <button
-            type="submit"
-            name="add"
-            id="Submit-{{ section.id }}"
-            class="product-form__submit"
-            {% if product.selected_or_first_available_variant.available == false %}
-              disabled
-            {% endif %}
-          >
-            {% if product.selected_or_first_available_variant.available %}
-              أضف إلى السلة
-            {% else %}
-              نفذت الكمية
-            {% endif %}
+        {%- comment -%} Trust Badges {%- endcomment -%}
+        {%- if section.settings.show_trust_badges -%}
+          <div class="ammo-product__trust-badges">
+            <div class="ammo-product__trust-badge">
+              {% render 'ammonader-icons', icon: 'truck' %}
+              <span>توصيل سريع</span>
+            </div>
+            <div class="ammo-product__trust-badge">
+              {% render 'ammonader-icons', icon: 'shield' %}
+              <span>ضمان الجودة</span>
+            </div>
+            <div class="ammo-product__trust-badge">
+              {% render 'ammonader-icons', icon: 'refresh' %}
+              <span>استبدال سهل</span>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Product Tabs {%- endcomment -%}
+    <div class="ammo-product__tabs">
+      <div class="ammo-product__tabs-nav">
+        <button type="button" class="ammo-product__tab-btn is-active" data-tab="description">
+          {% render 'ammonader-icons', icon: 'list' %}
+          الوصف
+        </button>
+        {%- if section.settings.size_guide != blank -%}
+          <button type="button" class="ammo-product__tab-btn" data-tab="size-guide">
+            {% render 'ammonader-icons', icon: 'ruler' %}
+            جدول المقاسات
           </button>
+        {%- endif -%}
+        <button type="button" class="ammo-product__tab-btn" data-tab="shipping">
+          {% render 'ammonader-icons', icon: 'truck' %}
+          الشحن
+        </button>
+      </div>
+
+      <div class="ammo-product__tabs-content">
+        <div id="description" class="ammo-product__tab-panel is-active">
+          <div class="ammo-product__description rte">
+            {{ product.description }}
+          </div>
         </div>
-      {% endform %}
+
+        {%- if section.settings.size_guide != blank -%}
+          <div id="size-guide" class="ammo-product__tab-panel">
+            <div class="ammo-product__size-guide rte">
+              {{ section.settings.size_guide }}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div id="shipping" class="ammo-product__tab-panel">
+          <div class="ammo-product__shipping-info rte">
+            {{ section.settings.shipping_info | default: '<p>التوصيل خلال 2-5 أيام عمل.ه.</p>' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} Mobile Accordion {%- endcomment -%}
+    <div class="ammo-product__accordion">
+      <div class="ammo-product__accordion-item is-open">
+        <button type="button" class="ammo-product__accordion-header">
+          {% render 'ammonader-icons', icon: 'list' %}
+          الوصف
+          {% render 'ammonader-icons', icon: 'chevron-down' %}
+        </button>
+        <div class="ammo-product__accordion-content">
+          <div class="rte">{{ product.description }}</div>
+        </div>
+      </div>
+
+      {%- if section.settings.size_guide != blank -%}
+        <div class="ammo-product__accordion-item">
+          <button type="button" class="ammo-product__accordion-header">
+            {% render 'ammonader-icons', icon: 'ruler' %}
+            جدول المقاسات
+            {% render 'ammonader-icons', icon: 'chevron-down' %}
+          </button>
+          <div class="ammo-product__accordion-content">
+            <div class="rte">{{ section.settings.size_guide }}</div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="ammo-product__accordion-item">
+        <button type="button" class="ammo-product__accordion-header">
+          {% render 'ammonader-icons', icon: 'truck' %}
+          الشحن
+          {% render 'ammonader-icons', icon: 'chevron-down' %}
+        </button>
+        <div class="ammo-product__accordion-content">
+          <div class="rte">
+            {{
+              section.settings.shipping_info
+              | default: '<p>التوصيل خلال 2-5 أيام عمل. الشحن مجاني للطلبات فوق 500 جنيه.</p>'
+            }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<script type="application/json" id="ProductJSON-{{ section.id }}">
-  {{ product.variants | json }}
+{%- comment -%} Product JSON for JavaScript {%- endcomment -%}
+<script id="product-json" type="application/json">
+  {{ product | json }}
 </script>
+
+<script src="{{ 'cart.js' | asset_url }}" defer></script>
+<script src="{{ 'product.js' | asset_url }}" defer></script>
 
 {% schema %}
 {
-  "name": "Product Page",
-  "settings": [],
+  "name": "منتج - عمو نادر",
+  "tag": "section",
+  "class": "ammo-product-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "إظهار مسار التنقل",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "إظهار التقييمات",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "تفعيل تكبير الصورة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "إظهار شارات الثقة",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "المحتوى الإضافي"
+    },
+    {
+      "type": "richtext",
+      "id": "size_guide",
+      "label": "جدول المقاسات"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_info",
+      "label": "معلومات الشحن",
+      "default": "<p>التوصيل خلال 2-5 أيام عمل. الشحن مجاني للطلبات فوق 500 جنيه.</p>"
+    }
+  ],
   "presets": [
     {
-      "name": "Product Page"
+      "name": "منتج - عمو نادر"
     }
   ]
 }

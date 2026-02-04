@@ -296,44 +296,6 @@
     }
 
     /**
-     * Initialize quantity selector
-     */
-    function initQuantitySelector() {
-        const quantityContainer = document.querySelector('.ammo-product__quantity');
-        if (!quantityContainer) return;
-
-        const minusBtn = quantityContainer.querySelector('[data-qty-minus]');
-        const plusBtn = quantityContainer.querySelector('[data-qty-plus]');
-        const input = quantityContainer.querySelector('input[name="quantity"]');
-
-        if (!minusBtn || !plusBtn || !input) return;
-
-        const min = parseInt(input.min) || 1;
-        const max = parseInt(input.max) || 999;
-
-        minusBtn.addEventListener('click', () => {
-            const currentVal = parseInt(input.value) || 1;
-            if (currentVal > min) {
-                input.value = currentVal - 1;
-            }
-        });
-
-        plusBtn.addEventListener('click', () => {
-            const currentVal = parseInt(input.value) || 1;
-            if (currentVal < max) {
-                input.value = currentVal + 1;
-            }
-        });
-
-        // Validate on blur
-        input.addEventListener('blur', () => {
-            let val = parseInt(input.value) || min;
-            val = Math.max(min, Math.min(max, val));
-            input.value = val;
-        });
-    }
-
-    /**
      * Initialize add to cart functionality
      */
     function initAddToCart() {
@@ -347,7 +309,7 @@
             const quantity = 1;
             const addBtn = form.querySelector('.ammo-product__add-btn');
 
-            if (variantId && typeof addToCart === 'function') {
+            if (variantId) {
                 addToCart(parseInt(variantId), quantity, addBtn);
             }
 

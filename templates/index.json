@@ -41,7 +41,6 @@
       ],
       "name": "Hero - عمو نادر",
       "settings": {
-        "hero_image": "shopify://shop_images/578d3409-4c03-4a50-ae2e-6a6388f5e0a4.jpg",
         "badge_text": "✨ تشكيلة جديدة ٢٠٢٦",
         "heading_line_1": "راحة",
         "heading_line_2": "أطفالك",
@@ -71,7 +70,7 @@
         "category_j8KgNK": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/0716f22d-9346-4477-b9ed-dfd956162cac.jpg",
+            "image": "shopify://shop_images/0716f22d-9346-4477-b9ed-dfd956162cac.webp",
             "title": "أولاد",
             "item_count": "250",
             "link": ""
@@ -80,7 +79,7 @@
         "category_TwLDbq": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/cd733bb5-cbd7-4d4f-8e6d-82d018305c87.jpg",
+            "image": "shopify://shop_images/cd733bb5-cbd7-4d4f-8e6d-82d018305c87.webp",
             "title": "بنات",
             "item_count": "280",
             "link": ""

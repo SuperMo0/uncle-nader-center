@@ -62,7 +62,7 @@
         "heading_part_1": "منتجاتنا",
         "heading_part_2": "المميزة",
         "collection": "automated-collection",
-        "products_to_show": 3
+        "products_to_show": 2
       }
     },
     "boys_girls_collection_WB4NaV": {
@@ -83,7 +83,7 @@
             "image": "shopify://shop_images/cd733bb5-cbd7-4d4f-8e6d-82d018305c87.webp",
             "title": "بنات",
             "item_count": "280",
-            "link": ""
+            "link": "shopify://collections/frontpage"
           }
         }
       },
